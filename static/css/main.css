@@ -46,6 +46,29 @@
   padding: 0;
 }
 
+/* ---- Font Awesome Icon Protection ----
+   Font Awesome renders icons via ::before pseudo-elements using a specific
+   font-family. DO NOT set font-family on FA element classes — that overrides
+   FA's own stylesheet and kills icon rendering entirely.
+   We only set display, line-height, and vertical-align here.               */
+.fa,
+.fas,
+.far,
+.fal,
+.fab,
+.fad,
+.fa-solid,
+.fa-regular,
+.fa-light,
+.fa-brands,
+.fa-duotone,
+i[class*="fa-"] {
+  display: inline-block;
+  line-height: 1;
+  vertical-align: middle;
+  /* font-family intentionally NOT set — FA's stylesheet handles it */
+}
+
 nav { user-select: none; }
 nav ul, nav ul li { list-style: none; outline: 0; }
 nav ul li a { text-decoration: none; }
@@ -165,6 +188,8 @@ body {
   width: 20px;
   height: 20px;
   flex-shrink: 0;
+  font-size: 16px;   /* explicit size for FA icons inside nav */
+  line-height: 1;
 }
 
 .nav-text {
@@ -307,9 +332,15 @@ body {
 .top-search-icon {
   position: absolute;
   left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
   color: var(--color-text-3);
   font-size: 13px;
+  line-height: 1;
   pointer-events: none;
+  z-index: 1;
+  width: 14px;
+  text-align: center;
 }
 
 .top-search-input {
@@ -631,7 +662,8 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: 18px;          /* explicit size for all FA icons inside metric cards */
+  line-height: 1;
   color: var(--color-text-2);
 }
 
@@ -882,16 +914,36 @@ input[type='password'].soc-input {
   align-items: center;
 }
 
+/* Input with icon — icon sits as a flex sibling BEFORE the input,
+   with negative margin to overlap visually into the padding zone.
+   The input uses padding-left to leave space for the icon.        */
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
 .input-fa-icon {
   position: absolute;
   left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
   color: var(--color-text-3);
   font-size: 14px;
+  line-height: 1;
   pointer-events: none;
+  z-index: 1;
+  /* Ensure the icon does not stretch or clip */
+  width: 16px;
+  text-align: center;
 }
 
-.input-with-icon .soc-input {
-  padding-left: 38px;
+.input-with-icon .soc-input,
+.input-with-icon .sg-input,
+.input-with-icon input[type='text'].soc-input,
+.input-with-icon input[type='email'].soc-input,
+.input-with-icon input[type='password'].soc-input {
+  padding-left: 38px !important;
 }
 
 /* Inline field error */
