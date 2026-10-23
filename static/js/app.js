@@ -424,12 +424,23 @@ async function loadRealDashboardTelemetry() {
             if (scoreEl) scoreEl.innerHTML = `${m.defense_score}<small>%</small>`;
             if (boxEl) boxEl.style.setProperty('--i', `${m.defense_score}%`);
 
+            // Update metric grid cards
             const totalEl = document.getElementById('statTotalScans');
             const threatsEl = document.getElementById('statThreatsBlocked');
             const cleanEl = document.getElementById('statCleanScans');
+            const defenseEl = document.getElementById('statDefenseScore');
             if (totalEl) totalEl.textContent = m.total_scans;
             if (threatsEl) threatsEl.textContent = m.threats_blocked;
             if (cleanEl) cleanEl.textContent = m.clean_scans;
+            if (defenseEl) defenseEl.innerHTML = `${m.defense_score}<small>%</small>`;
+
+            // Update sidebar counters (unique IDs to avoid duplicate-ID stale data)
+            const sidebarTotalEl = document.getElementById('sidebarStatTotalScans');
+            const sidebarThreatsEl = document.getElementById('sidebarStatThreatsBlocked');
+            const sidebarCleanEl = document.getElementById('sidebarStatCleanScans');
+            if (sidebarTotalEl) sidebarTotalEl.textContent = m.total_scans;
+            if (sidebarThreatsEl) sidebarThreatsEl.textContent = m.threats_blocked;
+            if (sidebarCleanEl) sidebarCleanEl.textContent = m.clean_scans;
         }
 
         // Recent Scans Table (from real MySQL safeguard_db.scans)

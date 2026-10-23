@@ -1,24 +1,69 @@
-"""
+﻿"""
 SafeGuard MySQL Enterprise Database Management Layer
 Connects to local MariaDB/MySQL (XAMPP/cPanel), handles schema migrations,
 user authentication hashing, and scan telemetry persistence.
+
+Connection pooling is provided by DBUtils.PooledDB so each request reuses
+an idle connection from the pool instead of opening a fresh TCP socket.
+Install: pip install DBUtils  (already in requirements if listed, else add it)
 """
 
 import os
 import json
+import logging
 import pymysql
 from pymysql.cursors import DictCursor
 from werkzeug.security import generate_password_hash, check_password_hash
 
+logger = logging.getLogger("safeguard.database")
+
 # Configuration from environment with local defaults
-DB_HOST = os.environ.get('DB_HOST', '127.0.0.1')
-DB_PORT = int(os.environ.get('DB_PORT', 3306))
-DB_USER = os.environ.get('DB_USER', 'root')
+DB_HOST     = os.environ.get('DB_HOST', '127.0.0.1')
+DB_PORT     = int(os.environ.get('DB_PORT', 3306))
+DB_USER     = os.environ.get('DB_USER', 'root')
 DB_PASSWORD = os.environ.get('DB_PASSWORD', '')
-DB_NAME = os.environ.get('DB_NAME', 'safeguard_db')
+DB_NAME     = os.environ.get('DB_NAME', 'safeguard_db')
+
+# ── Connection pool ───────────────────────────────────────────────────────────
+# Lazily initialised on first use so the import doesn't fail when MySQL is down.
+_pool = None
+
+def _get_pool():
+    """Returns (creating on first call) a DBUtils PooledDB connection pool."""
+    global _pool
+    if _pool is not None:
+        return _pool
+
+    try:
+        from dbutils.pooled_db import PooledDB
+    except ImportError:
+        # DBUtils not installed — fall back to direct connections with a warning
+        logger.warning(
+            "DBUtils not installed; falling back to direct connections. "
+            "Install with: pip install DBUtils"
+        )
+        return None
+
+    _pool = PooledDB(
+        creator=pymysql,
+        mincached=2,       # keep 2 idle connections open
+        maxcached=10,      # pool up to 10 idle connections
+        maxconnections=20, # hard cap on concurrent connections
+        blocking=True,     # block rather than raise if pool is exhausted
+        host=DB_HOST,
+        port=DB_PORT,
+        user=DB_USER,
+        password=DB_PASSWORD,
+        database=DB_NAME,
+        cursorclass=DictCursor,
+        autocommit=True,
+        charset='utf8mb4',
+    )
+    logger.info("Database connection pool initialised (min=2 max=20)")
+    return _pool
 
 def get_server_connection():
-    """Returns raw connection to MySQL server without selecting database."""
+    """Returns raw connection to MySQL server without selecting database (used for DB creation only)."""
     return pymysql.connect(
         host=DB_HOST,
         port=DB_PORT,
@@ -29,7 +74,15 @@ def get_server_connection():
     )
 
 def get_db_connection():
-    """Returns connection to the SafeGuard database."""
+    """
+    Returns a connection to the SafeGuard database.
+    Uses the connection pool when DBUtils is available; falls back to a
+    direct pymysql connection otherwise.
+    """
+    pool = _get_pool()
+    if pool is not None:
+        return pool.connection()
+    # Fallback: direct connection (no pooling)
     return pymysql.connect(
         host=DB_HOST,
         port=DB_PORT,
@@ -37,7 +90,8 @@ def get_db_connection():
         password=DB_PASSWORD,
         database=DB_NAME,
         cursorclass=DictCursor,
-        autocommit=True
+        autocommit=True,
+        charset='utf8mb4',
     )
 
 def initialize_database():
@@ -73,6 +127,7 @@ def initialize_database():
                     `user_id` INT NULL,
                     `scan_type` VARCHAR(40) NOT NULL,
                     `target_input` TEXT NOT NULL,
+                    `target_host` VARCHAR(255) DEFAULT NULL COMMENT 'Extracted hostname/IP for quick filtering',
                     `threat_score` INT NOT NULL,
                     `verdict` VARCHAR(80) NOT NULL,
                     `verdict_tier` VARCHAR(30) NOT NULL,
@@ -81,9 +136,25 @@ def initialize_database():
                     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     INDEX `idx_scan_type` (`scan_type`),
                     INDEX `idx_threat_score` (`threat_score`),
+                    INDEX `idx_verdict_tier` (`verdict_tier`),
+                    INDEX `idx_target_host` (`target_host`),
+                    INDEX `idx_created_at` (`created_at`),
                     FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE SET NULL
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
             """)
+
+            # Add target_host column to existing deployments that predate this migration
+            cursor.execute("SHOW COLUMNS FROM `scans` LIKE 'target_host';")
+            if not cursor.fetchone():
+                cursor.execute("""
+                    ALTER TABLE `scans`
+                        ADD COLUMN `target_host` VARCHAR(255) DEFAULT NULL
+                            COMMENT 'Extracted hostname/IP for quick filtering'
+                            AFTER `target_input`,
+                        ADD INDEX `idx_target_host` (`target_host`),
+                        ADD INDEX `idx_created_at` (`created_at`);
+                """)
+                logger.info("Database migration: added target_host column and indexes to scans table")
 
             # Active incidents stream
             cursor.execute("""
@@ -180,11 +251,15 @@ def initialize_database():
             # Seed default admin user if users table is empty
             cursor.execute("SELECT COUNT(*) as cnt FROM `users`;")
             if cursor.fetchone()['cnt'] == 0:
-                default_pw = generate_password_hash("Admin@123456")
-                cursor.execute("""
-                    INSERT INTO `users` (`username`, `email`, `password_hash`, `role`)
-                    VALUES (%s, %s, %s, %s);
-                """, ('admin', 'admin@safeguard.local', default_pw, 'Lead SecOps Officer'))
+                admin_password = os.environ.get('ADMIN_DEFAULT_PASSWORD', '')
+                if not admin_password:
+                    logger.warning("ADMIN_DEFAULT_PASSWORD not set - skipping default admin seed. Create a user via /api/auth/register.")
+                else:
+                    default_pw = generate_password_hash(admin_password)
+                    cursor.execute("""
+                        INSERT INTO `users` (`username`, `email`, `password_hash`, `role`)
+                        VALUES (%s, %s, %s, %s);
+                    """, ('admin', 'admin@safeguard.local', default_pw, 'Lead SecOps Officer'))
 
             # Seed incidents if empty
             cursor.execute("SELECT COUNT(*) as cnt FROM `incidents`;")
@@ -584,17 +659,34 @@ def get_user_by_id(user_id):
 # SCANS STORAGE & REAL TELEMETRY
 # ==============================================================================
 def save_scan(user_id, scan_type, target_input, threat_score, verdict, verdict_tier, summary, details_dict):
-    """Persists a completed threat scan result into the database."""
+    """
+    Persists a completed threat scan result into the database.
+    Extracts a target_host from details_dict for indexed querying
+    (hostname for URL/header scans, IP for ip scans, domain for email scans).
+    """
+    # Promote key fields to the queryable target_host column
+    target_host = (
+        details_dict.get('hostname') or
+        details_dict.get('ip') or
+        details_dict.get('domain') or
+        None
+    )
+    if target_host:
+        target_host = str(target_host)[:255]
+
     try:
         conn = get_db_connection()
         with conn.cursor() as cursor:
             cursor.execute("""
-                INSERT INTO scans (user_id, scan_type, target_input, threat_score, verdict, verdict_tier, summary, details_json)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
+                INSERT INTO scans
+                    (user_id, scan_type, target_input, target_host, threat_score,
+                     verdict, verdict_tier, summary, details_json)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
             """, (
                 user_id,
                 scan_type,
                 target_input,
+                target_host,
                 threat_score,
                 verdict,
                 verdict_tier,
@@ -603,9 +695,11 @@ def save_scan(user_id, scan_type, target_input, threat_score, verdict, verdict_t
             ))
             scan_id = cursor.lastrowid
         conn.close()
+        logger.debug("scan saved: id=%s type=%s target_host=%s score=%s verdict=%s",
+                     scan_id, scan_type, target_host, threat_score, verdict)
         return scan_id
     except Exception as e:
-        print(f"Error saving scan to DB: {e}")
+        logger.error("Error saving scan to DB: %s", e)
         return None
 
 def get_recent_scans(limit=10):
@@ -625,7 +719,7 @@ def get_recent_scans(limit=10):
         conn.close()
         return scans
     except Exception as e:
-        print(f"Error fetching recent scans: {e}")
+        logger.error("Error fetching recent scans: %s", e)
         return []
 
 def get_dashboard_metrics():
@@ -658,7 +752,7 @@ def get_dashboard_metrics():
             "defense_score": posture_percent
         }
     except Exception as e:
-        print(f"Error getting metrics: {e}")
+        logger.error("Error getting dashboard metrics: %s", e)
         return {
             "total_scans": 0,
             "threats_blocked": 0,
@@ -710,7 +804,7 @@ def get_courses():
         conn.close()
         return courses
     except Exception as e:
-        print(f"Error fetching courses: {e}")
+        logger.error("Error fetching courses: %s", e)
         return []
 
 def get_course_by_id(course_id):
@@ -728,7 +822,7 @@ def get_course_by_id(course_id):
         conn.close()
         return course
     except Exception as e:
-        print(f"Error fetching course {course_id}: {e}")
+        logger.error("Error fetching course %s: %s", course_id, e)
         return None
 
 def get_quizzes():
@@ -741,7 +835,7 @@ def get_quizzes():
         conn.close()
         return quizzes
     except Exception as e:
-        print(f"Error fetching quizzes: {e}")
+        logger.error("Error fetching quizzes: %s", e)
         return []
 
 def get_quiz_by_id(quiz_id):
@@ -759,7 +853,7 @@ def get_quiz_by_id(quiz_id):
         conn.close()
         return quiz
     except Exception as e:
-        print(f"Error fetching quiz {quiz_id}: {e}")
+        logger.error("Error fetching quiz %s: %s", quiz_id, e)
         return None
 
 def save_quiz_attempt(user_id, quiz_id, score, passed):
@@ -775,7 +869,7 @@ def save_quiz_attempt(user_id, quiz_id, score, passed):
         conn.close()
         return attempt_id
     except Exception as e:
-        print(f"Error saving quiz attempt: {e}")
+        logger.error("Error saving quiz attempt: %s", e)
         return None
 
 def get_course_materials():
@@ -788,5 +882,5 @@ def get_course_materials():
         conn.close()
         return materials
     except Exception as e:
-        print(f"Error fetching materials: {e}")
+        logger.error("Error fetching materials: %s", e)
         return []

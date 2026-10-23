@@ -1,10 +1,13 @@
 """
 SafeGuard Password Security & Entropy Audit Engine
-Evaluates entropy, NIST SP 800-63B compliance, and brute-force resistance.
+Evaluates entropy, NIST SP 800-63B compliance, brute-force resistance,
+pattern penalties (keyboard walks, leet substitutions, repetition),
+and real breach exposure via HIBP k-anonymity range API.
 """
 
 import math
 import re
+from engine.breach_checker import check_password_pwned
 
 COMMON_PASSWORDS = {
     '123456', 'password', '12345678', 'qwerty', '123456789', '12345', '1234',
@@ -12,6 +15,69 @@ COMMON_PASSWORDS = {
     'princess', 'football', 'monkey', 'master', 'charlie', 'shadow', 'superman',
     'secret', 'pass123', 'root', 'login', 'testing', 'hunter2', 'trustno1'
 }
+
+# Common keyboard walk sequences (rows on a QWERTY layout)
+_KEYBOARD_WALKS = [
+    'qwertyuiop', 'asdfghjkl', 'zxcvbnm',
+    'qwerty', 'asdfgh', 'zxcvbn',
+    '1234567890', '0987654321',
+    'qazwsx', 'wsxedc', 'edcrfv',
+]
+
+# Leet-speak substitution map (attacker reverses these before dictionary attack)
+_LEET_MAP = str.maketrans({
+    '0': 'o', '1': 'i', '3': 'e', '4': 'a',
+    '5': 's', '6': 'g', '7': 't', '@': 'a',
+    '$': 's', '!': 'i', '+': 't',
+})
+
+
+def _count_pattern_penalties(password: str) -> tuple[int, list[str]]:
+    """
+    Detects weak structural patterns and returns a penalty score plus
+    a list of human-readable findings.
+
+    Patterns checked:
+      - 3+ consecutive repeated characters (aaa, 111)
+      - Keyboard walk sequences of 4+ chars
+      - Leet-speak variants of common passwords
+      - Simple base-word + digits suffix (password123, admin2024)
+    """
+    penalty = 0
+    findings = []
+    lower = password.lower()
+    de_leeted = lower.translate(_LEET_MAP)
+
+    # 1. Consecutive repetition (aaa, 1111)
+    if re.search(r'(.)\1{2,}', password):
+        penalty += 15
+        findings.append("Contains 3+ consecutive repeated characters.")
+
+    # 2. Keyboard walk (qwerty, asdfgh, 12345)
+    for walk in _KEYBOARD_WALKS:
+        for length in range(min(len(password), len(walk)), 3, -1):
+            for start in range(len(walk) - length + 1):
+                chunk = walk[start:start + length]
+                if chunk in lower or chunk[::-1] in lower:
+                    penalty += min(20, length * 4)
+                    findings.append(f"Keyboard walk pattern detected: '{chunk}'.")
+                    break
+            else:
+                continue
+            break
+
+    # 3. Leet-speak variant of a known-weak word
+    if de_leeted in COMMON_PASSWORDS:
+        penalty += 25
+        findings.append("Leet-speak substitution of a common dictionary password.")
+
+    # 4. Base word + digits suffix/prefix pattern (password123, 2024admin)
+    base_word = re.sub(r'^\d+|\d+$', '', lower).strip()
+    if len(base_word) >= 4 and base_word in COMMON_PASSWORDS:
+        penalty += 20
+        findings.append(f"Common base word with appended digits: '{base_word}'.")
+
+    return penalty, findings
 
 def audit_password(password: str) -> dict:
     """
@@ -109,6 +175,10 @@ def audit_password(password: str) -> dict:
 
     score = min(100, max(5, round(score)))
 
+    # Pattern penalty: keyboard walks, leet-speak, repetition, base-word+digits
+    pattern_penalty, pattern_findings = _count_pattern_penalties(password)
+    score = max(5, score - pattern_penalty)
+
     if score >= 80:
         verdict = "FORTIFIED DEFENSE"
         tier = "safe"
@@ -116,6 +186,14 @@ def audit_password(password: str) -> dict:
         verdict = "MODERATE RESISTANCE"
         tier = "warning"
     else:
+        verdict = "CRITICALLY VULNERABLE"
+        tier = "critical"
+
+    # Real HIBP k-anonymity check — only a 5-char SHA-1 prefix is transmitted,
+    # the full password never leaves this machine.
+    pwned_result = check_password_pwned(password)
+    if pwned_result.get("pwned"):
+        score = min(score, 10)
         verdict = "CRITICALLY VULNERABLE"
         tier = "critical"
 
@@ -138,5 +216,7 @@ def audit_password(password: str) -> dict:
             "uppercase": has_upper,
             "numbers": has_digits,
             "symbols": has_special
-        }
+        },
+        "pattern_findings": pattern_findings,
+        "pwned_check": pwned_result
     }

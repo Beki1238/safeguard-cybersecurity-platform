@@ -16,11 +16,25 @@ HIGH_RISK_TLDS = {
 
 # Targeted enterprise brands frequently impersonated in credential harvesting
 MONITORED_BRANDS = [
-    'paypal', 'google', 'apple', 'microsoft', 'amazon', 'netflix', 
-    'chase', 'wellsfargo', 'bankofamerica', 'citibank', 'binance', 
-    'coinbase', 'metamask', 'kraken', 'telegram', 'whatsapp', 
-    'instagram', 'facebook', 'steam', 'dhl', 'fedex', 'usps', 
-    'irs', 'outlook', 'office365', 'icloud', 'dropbox'
+    # Finance & banking
+    'paypal', 'chase', 'wellsfargo', 'bankofamerica', 'citibank',
+    'hsbc', 'barclays', 'truist', 'usbank', 'capitalone',
+    'zelle', 'venmo', 'cashapp', 'wise',
+    # Crypto
+    'binance', 'coinbase', 'metamask', 'kraken', 'ledger', 'trezor',
+    # Big tech
+    'google', 'apple', 'microsoft', 'amazon', 'facebook', 'instagram',
+    'twitter', 'linkedin', 'netflix', 'adobe', 'dropbox',
+    # Messaging & social
+    'telegram', 'whatsapp', 'discord', 'tiktok', 'snapchat', 'youtube',
+    # Cloud & productivity
+    'outlook', 'office365', 'icloud', 'onedrive', 'sharepoint',
+    # Logistics
+    'dhl', 'fedex', 'usps', 'ups',
+    # Government
+    'irs', 'gov',
+    # Auth
+    'steam', 'blizzard', 'epicgames',
 ]
 
 # Sensitive authentication and finance keywords
@@ -31,12 +45,32 @@ PHISHING_KEYWORDS = [
     'security', 'authenticate', 'payment', 'claim', 'refund', 'bonus'
 ]
 
-# Common Cyrillic / Greek homoglyphs used in IDN spoofing
+# Homoglyph map: Unicode lookalike → ASCII equivalent
+# Covers Cyrillic, Greek, and other common IDN spoofing characters
 HOMOGLYPH_MAP = {
-    'а': 'a', 'с': 'c', 'е': 'e', 'о': 'o', 'р': 'p', 'х': 'x', 
+    # Cyrillic
+    'а': 'a', 'с': 'c', 'е': 'e', 'о': 'o', 'р': 'p', 'х': 'x',
     'у': 'y', 'і': 'i', 'ј': 'j', 'ѕ': 's', 'ԁ': 'd', 'ԛ': 'q',
-    'α': 'a', 'ο': 'o', 'ρ': 'p', 'ν': 'v', 'τ': 't'
+    'ѵ': 'v', 'ԝ': 'w', 'ԟ': 'k', 'ԍ': 'g', 'ԋ': 'h',
+    'в': 'b', 'г': 'r', 'з': '3', 'и': 'n', 'к': 'k', 'м': 'm',
+    'н': 'h', 'п': 'n', 'т': 't',
+    # Greek
+    'α': 'a', 'β': 'b', 'ε': 'e', 'ζ': 'z', 'η': 'n', 'ι': 'i',
+    'κ': 'k', 'μ': 'm', 'ν': 'v', 'ο': 'o', 'ρ': 'p', 'τ': 't',
+    'υ': 'u', 'χ': 'x', 'ω': 'w',
+    # Latin lookalikes
+    'ɑ': 'a', 'ɡ': 'g', 'ɩ': 'i', 'ɪ': 'i', 'ʟ': 'l', 'ʀ': 'r',
+    'ƅ': 'b', 'ƈ': 'c', 'ɗ': 'd', 'ƒ': 'f', 'ɦ': 'h', 'ʝ': 'j',
+    'ƙ': 'k', 'ɱ': 'm', 'ɲ': 'n', 'ơ': 'o', 'ƥ': 'p', 'ʂ': 's',
+    'ƭ': 't', 'ʉ': 'u', 'ʋ': 'v', 'ƴ': 'y', 'ƶ': 'z',
+    # Symbols often swapped visually
+    '0': 'o', '1': 'l', '|': 'l',
 }
+
+
+def _normalize_homoglyphs(s: str) -> str:
+    """Replaces all known homoglyph characters with their ASCII equivalents."""
+    return ''.join(HOMOGLYPH_MAP.get(c, c) for c in s)
 
 def calculate_shannon_entropy(string: str) -> float:
     """Calculates the Shannon entropy of a string."""
@@ -144,21 +178,28 @@ def analyze_url(raw_url: str) -> dict:
         })
 
     # 5. Brand Spoofing / Typosquatting Analysis
+    # Also run checks against a homoglyph-normalized version of the hostname
+    # so that e.g. "pаypal.com" (Cyrillic 'а') is caught as a PayPal spoof.
     matched_brands = []
     typosquatted_brands = []
     domain_labels = hostname.split('.')
     main_domain = domain_labels[-2] if len(domain_labels) >= 2 else hostname
+    normalized_hostname = _normalize_homoglyphs(hostname)
+    normalized_main_domain = _normalize_homoglyphs(main_domain)
 
     for brand in MONITORED_BRANDS:
-        # Check if brand exists in subdomains or path while main domain is not the brand
-        if brand in hostname:
-            if main_domain != brand and main_domain != f"{brand}":
+        # Impersonation: brand token appears in subdomains/path but main domain isn't the brand
+        if brand in hostname or brand in normalized_hostname:
+            # Check against both raw and normalized main domain
+            if main_domain != brand and normalized_main_domain != brand:
                 matched_brands.append(brand)
         else:
-            # Check Levenshtein distance against main domain for typosquatting (e.g., paypa1, g00gle)
-            dist = levenshtein_distance(main_domain, brand)
-            if 0 < dist <= 2 and abs(len(main_domain) - len(brand)) <= 2:
-                typosquatted_brands.append((brand, dist))
+            # Typosquatting: Levenshtein distance check on both raw and normalized main domain
+            for candidate in (main_domain, normalized_main_domain):
+                dist = levenshtein_distance(candidate, brand)
+                if 0 < dist <= 2 and abs(len(candidate) - len(brand)) <= 2:
+                    typosquatted_brands.append((brand, dist))
+                    break  # don't double-count if both raw and normalized match
 
     if matched_brands:
         risk_score += 45

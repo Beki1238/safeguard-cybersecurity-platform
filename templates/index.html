@@ -36,7 +36,7 @@
 
                 <div class="top-search-wrap">
                     <i class="fa-solid fa-magnifying-glass top-search-icon"></i>
-                    <input type="text" id="omniSearchInput" class="top-search-input" placeholder="Search IOCs, CVEs, domains, hashes, IPs... (Press Enter)" onkeydown="handleTopSearch(event)">
+                    <input type="text" id="omniSearchInput" class="top-search-input" placeholder="Search IOCs, CVEs, domains, hashes, IPs... (Press Enter)" onkeydown="handleTopSearch(event)" aria-label="Search IOCs, CVEs, domains, hashes, and IPs">
                     <span class="top-search-kbd">↵ Enter</span>
                 </div>
             </div>
@@ -358,7 +358,7 @@
                                     <i class="fa-solid fa-globe input-fa-icon"></i>
                                     <input type="text" id="targetUrlInput" class="soc-input" placeholder="Enter target URL (e.g., http://secure-login-paypal.verify-account-update.tk/signin)">
                                 </div>
-                                <button class="btn-primary" id="btnRunUrlScan" onclick="executeUrlScan()">
+                                <button class="btn-primary" id="btnRunUrlScan" onclick="executeUrlScan()" aria-label="Execute URL scan">
                                     <i class="fa-solid fa-satellite-dish"></i>
                                     <span>EXECUTE SCAN</span>
                                 </button>
@@ -443,7 +443,7 @@
                                     <button class="sample-chip" onclick="fillMessageSample('delivery')">USPS Unpaid Fee</button>
                                     <button class="sample-chip" onclick="fillMessageSample('crypto')">Bitcoin Prize Lure</button>
                                 </div>
-                                <button class="btn-primary" id="btnRunMsgScan" onclick="executeMessageScan()">
+                                <button class="btn-primary" id="btnRunMsgScan" onclick="executeMessageScan()" aria-label="Analyze message for phishing vectors">
                                     <i class="fa-solid fa-brain"></i>
                                     <span>ANALYZE VECTORS</span>
                                 </button>
@@ -509,7 +509,7 @@
                                     <i class="fa-solid fa-envelope input-fa-icon"></i>
                                     <input type="email" id="emailAuditInput" class="soc-input" placeholder="Enter email address (e.g. user@targetdomain.com)">
                                 </div>
-                                <button class="btn-primary" id="btnRunEmailScan" onclick="executeEmailAudit()">
+                                <button class="btn-primary" id="btnRunEmailScan" onclick="executeEmailAudit()" aria-label="Audit email identity for breaches">
                                     <i class="fa-solid fa-shield-halved"></i>
                                     <span>AUDIT IDENTITY</span>
                                 </button>
@@ -624,7 +624,7 @@
                                     <i class="fa-solid fa-server input-fa-icon"></i>
                                     <input type="text" id="headerUrlInput" class="soc-input" placeholder="Enter target domain or URL (e.g. https://example.com)">
                                 </div>
-                                <button class="btn-primary" onclick="executeHeaderAudit()">
+                                <button class="btn-primary" id="btnRunHeaderScan" onclick="executeHeaderAudit()" aria-label="Inspect HTTP security headers">
                                     <i class="fa-solid fa-magnifying-glass"></i>
                                     <span>INSPECT HEADERS</span>
                                 </button>
@@ -683,7 +683,7 @@
                                     <i class="fa-solid fa-network-wired input-fa-icon"></i>
                                     <input type="text" id="ipAuditInput" class="soc-input" placeholder="Enter IP address (e.g. 198.51.100.24)">
                                 </div>
-                                <button class="btn-primary" onclick="executeIpAudit()">
+                                <button class="btn-primary" id="btnRunIpAudit" onclick="executeIpAudit()" aria-label="Analyze IP address intelligence">
                                     <i class="fa-solid fa-satellite-dish"></i>
                                     <span>ANALYZE IP</span>
                                 </button>
@@ -891,9 +891,9 @@
                                 </div>
                             </div>
                             <div class="calories-content">
-                                <p><span>Total Scans:</span> <span id="statTotalScans">0</span></p>
-                                <p><span>Threats Blocked:</span> <span id="statThreatsBlocked" style="color:#ef4444;">0</span></p>
-                                <p><span>Clean Assets:</span> <span id="statCleanScans" style="color:#10b981;">0</span></p>
+                                <p><span>Total Scans:</span> <span id="sidebarStatTotalScans">0</span></p>
+                                <p><span>Threats Blocked:</span> <span id="sidebarStatThreatsBlocked" style="color:#ef4444;">0</span></p>
+                                <p><span>Clean Assets:</span> <span id="sidebarStatCleanScans" style="color:#10b981;">0</span></p>
                             </div>
                         </div>
                     </div>
@@ -930,7 +930,7 @@
     </div>
 
     <!-- ================= AUTHENTICATION MODAL (LOGIN / REGISTER) ================= -->
-    <div class="auth-modal-backdrop" id="authModal" style="display:none;" onclick="handleModalBackdropClick(event)">
+    <div class="auth-modal-backdrop" id="authModal" style="display:none;" onclick="handleModalBackdropClick(event)" role="dialog" aria-modal="true" aria-label="Authentication — Sign In or Create Account">
         <div class="auth-modal-card" onclick="event.stopPropagation()">
             <button class="modal-close-btn" onclick="closeAuthModal()" aria-label="Close authentication modal">✕</button>
             
@@ -1011,7 +1011,7 @@
     </div>
 
     <!-- ================= VIDEO MASTERCLASS MODAL ================= -->
-    <div class="media-modal-backdrop" id="videoModal" style="display:none;" onclick="handleVideoModalBackdropClick(event)">
+    <div class="media-modal-backdrop" id="videoModal" style="display:none;" onclick="handleVideoModalBackdropClick(event)" role="dialog" aria-modal="true" aria-label="Video Masterclass Player">
         <div class="video-modal-card" onclick="event.stopPropagation()">
             <div class="video-modal-header">
                 <div class="video-modal-title-wrap">
@@ -1036,7 +1036,7 @@
     </div>
 
     <!-- ================= CHEATSHEET READER MODAL ================= -->
-    <div class="media-modal-backdrop" id="materialModal" style="display:none;" onclick="handleMaterialModalBackdropClick(event)">
+    <div class="media-modal-backdrop" id="materialModal" style="display:none;" onclick="handleMaterialModalBackdropClick(event)" role="dialog" aria-modal="true" aria-label="Course Cheatsheet Reader">
         <div class="material-modal-card" onclick="event.stopPropagation()">
             <div class="material-modal-header">
                 <div>

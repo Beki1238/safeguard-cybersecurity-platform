@@ -1,6 +1,10 @@
 """
 SafeGuard HTTP Security Headers & Transport Layer Inspector
 Audits website security headers, transport layer compliance, and information leakage.
+
+A live HTTP request is made to the target host. If the request fails (firewall,
+timeout, offline host) the function returns an honest error result instead of
+silently falling back to fake passing data.
 """
 
 import urllib.request
@@ -42,9 +46,14 @@ SECURITY_HEADER_STANDARDS = {
 
 LEAK_HEADERS = ['server', 'x-powered-by', 'x-aspnet-version', 'x-runtime']
 
+
 def inspect_headers(target_url: str) -> dict:
     """
-    Connects to target web host and performs a live audit of perimeter security headers.
+    Connects to target web host and performs a live audit of HTTP security headers.
+
+    Returns a structured result with real header values and a security grade.
+    If the live connection fails for any reason, returns an error result with
+    live_connection=False and a descriptive error message — no fake data is used.
     """
     target_url = target_url.strip()
     if not target_url:
@@ -58,11 +67,11 @@ def inspect_headers(target_url: str) -> dict:
 
     headers_found = {}
     leakage_found = {}
-    is_live_check = False
     status_code = None
+    connection_error = None
 
     try:
-        # Create unverified context if needed for testing hosts with self-signed certs
+        # Accept self-signed certs so legitimate test/staging hosts don't fail
         ctx = ssl.create_default_context()
         ctx.check_hostname = False
         ctx.verify_mode = ssl.CERT_NONE
@@ -71,7 +80,7 @@ def inspect_headers(target_url: str) -> dict:
             target_url,
             headers={'User-Agent': 'SafeGuard-CyberIntel-Scanner/2.4 (SecurityAudit; Enterprise)'}
         )
-        with urllib.request.urlopen(req, timeout=5, context=ctx) as response:
+        with urllib.request.urlopen(req, timeout=6, context=ctx) as response:
             status_code = response.getcode()
             raw_headers = response.info()
             for k, v in raw_headers.items():
@@ -79,26 +88,36 @@ def inspect_headers(target_url: str) -> dict:
                 headers_found[k_lower] = v
                 if k_lower in LEAK_HEADERS:
                     leakage_found[k_lower] = v
-            is_live_check = True
 
     except Exception as e:
-        # Fallback to simulated evaluation if offline or blocked by target firewall
-        is_live_check = False
-        headers_found = {
-            "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
-            "x-content-type-options": "nosniff",
-            "x-frame-options": "DENY"
+        # Return an honest error result — never substitute fake passing headers
+        return {
+            "url": target_url,
+            "hostname": hostname,
+            "live_connection": False,
+            "status_code": None,
+            "connection_error": str(e),
+            "security_score": None,
+            "security_grade": "N/A",
+            "tier": "warning",
+            "audit_results": [],
+            "information_leakage": {},
+            "total_headers_received": 0,
+            "note": (
+                "Live connection to the target host failed. The audit cannot proceed "
+                "without a real HTTP response. Verify the URL is reachable, check "
+                "firewall rules, and ensure the host is online."
+            )
         }
-        error_note = str(e)
 
-    # Evaluate against standards
+    # ── Evaluate headers against standards ───────────────────────────────────
     header_results = []
     score = 100
 
     for h_key, meta in SECURITY_HEADER_STANDARDS.items():
         present = h_key in headers_found
         value = headers_found.get(h_key, None)
-        
+
         if not present:
             deduction = 20 if meta["importance"] == "CRITICAL" else 10
             score -= deduction
@@ -112,7 +131,7 @@ def inspect_headers(target_url: str) -> dict:
             "value": value
         })
 
-    # Evaluate leakage
+    # Penalise information-leakage headers
     if leakage_found:
         score -= len(leakage_found) * 5
 
@@ -134,8 +153,9 @@ def inspect_headers(target_url: str) -> dict:
     return {
         "url": target_url,
         "hostname": hostname,
-        "live_connection": is_live_check,
+        "live_connection": True,
         "status_code": status_code,
+        "connection_error": None,
         "security_score": score,
         "security_grade": grade,
         "tier": tier,
