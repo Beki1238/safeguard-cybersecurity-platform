@@ -7,6 +7,16 @@
 let currentTab = 'dashboard';
 let telemetryCache = null;
 
+// ============================================================================
+// API FETCH WRAPPER (CSRF-aware)
+// ============================================================================
+async function apiFetch(url, options = {}) {
+    const csrfToken = document.querySelector('meta[name=csrf-token]')?.content || '';
+    const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
+    if (csrfToken) headers['X-CSRF-Token'] = csrfToken;
+    return fetch(url, { ...options, headers });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll(".nav-item").forEach((navItem) => {
         navItem.addEventListener("click", () => {
@@ -19,6 +29,60 @@ document.addEventListener('DOMContentLoaded', () => {
     loadDashboardTelemetry();
     loadPlaybooks();
     loadLearningJourney();
+
+    // ---- Input constraint enforcement ----
+    const inputButtonPairs = [
+        { inputId: 'targetUrlInput',    btnId: 'btnRunUrlScan' },
+        { inputId: 'messageTextInput',  btnId: 'btnRunMsgScan' },
+        { inputId: 'emailAuditInput',   btnId: 'btnRunEmailScan' },
+        { inputId: 'passwordAuditInput',btnId: 'btnRunPwdAudit' },
+        { inputId: 'headerUrlInput',    btnId: 'btnRunHeaderScan' },
+        { inputId: 'ipAuditInput',      btnId: 'btnRunIpAudit' },
+    ];
+
+    inputButtonPairs.forEach(({ inputId, btnId }) => {
+        const input = document.getElementById(inputId);
+        const btn = document.getElementById(btnId);
+        if (!input || !btn) return;
+        // Initially disable if empty
+        btn.disabled = input.value.trim().length === 0;
+        input.addEventListener('input', () => {
+            btn.disabled = input.value.trim().length === 0;
+        });
+    });
+
+    // ---- Inline validation on blur ----
+    const urlInput = document.getElementById('targetUrlInput');
+    if (urlInput) {
+        urlInput.addEventListener('blur', () => {
+            let errEl = urlInput.parentElement.querySelector('.field-error');
+            if (!errEl) {
+                errEl = document.createElement('span');
+                errEl.className = 'field-error';
+                urlInput.parentElement.after(errEl);
+            }
+            const val = urlInput.value.trim();
+            errEl.textContent = (val && !val.includes('.'))
+                ? 'Enter a valid URL or domain (e.g. example.com)'
+                : '';
+        });
+    }
+
+    const emailInput = document.getElementById('emailAuditInput');
+    if (emailInput) {
+        emailInput.addEventListener('blur', () => {
+            let errEl = emailInput.parentElement.querySelector('.field-error');
+            if (!errEl) {
+                errEl = document.createElement('span');
+                errEl.className = 'field-error';
+                emailInput.parentElement.after(errEl);
+            }
+            const val = emailInput.value.trim();
+            errEl.textContent = (val && !val.includes('@'))
+                ? 'Enter a valid email address (e.g. user@domain.com)'
+                : '';
+        });
+    }
 });
 
 // ============================================================================
@@ -121,11 +185,10 @@ function showToast(message, isError = false) {
     const toast = document.getElementById('socToast');
     if (!toast) return;
     toast.textContent = message;
-    toast.style.borderColor = isError ? 'var(--color-crimson)' : 'var(--color-cyan)';
+    toast.className = isError ? 'error' : 'success';
     toast.classList.add('show');
-    setTimeout(() => {
-        toast.classList.remove('show');
-    }, 3500);
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(() => toast.classList.remove('show'), 4000);
 }
 
 function escapeHtml(str) {

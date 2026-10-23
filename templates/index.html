@@ -7,17 +7,17 @@
     <meta name="description" content="SafeGuard Cybersecurity & Threat Operations Center. Real-time heuristic URL scanning, phishing detection, breach radar, and MySQL scan auditing.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;500;600;700;800;900;1000&family=Roboto:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="/static/css/main.css">
 </head>
-<body>
+<body role="application">
     <div class="app-wrapper">
         <!-- ================= TOP RESPONSIVE NAVIGATION BAR ================= -->
         <header class="desktop-top-nav">
             <!-- Brand & Mobile Toggle -->
             <div class="top-nav-left">
-                <button class="top-hamburger-btn" id="mobileMenuToggle" onclick="toggleMobileNav()" title="Toggle Menu">
+                <button class="top-hamburger-btn" id="mobileMenuToggle" onclick="toggleMobileNav()" title="Toggle Menu" aria-label="Toggle navigation menu">
                     <i class="fa-solid fa-bars"></i>
                 </button>
 
@@ -63,7 +63,7 @@
             <div class="top-nav-right">
                 <div class="top-defcon-pill">DEFCON 2</div>
 
-                <button class="top-action-btn" onclick="switchNav('url-scanner')">
+                <button class="top-action-btn" onclick="switchNav('url-scanner')" aria-label="Quick URL Scan">
                     <i class="fa-solid fa-bolt-lightning"></i>
                     <span>Quick Scan</span>
                 </button>
@@ -78,7 +78,7 @@
         <!-- ================= MAIN DASHBOARD CONTAINER ================= -->
         <main>
             <!-- SIDEBAR MAIN MENU (PURPLE INVERTED TABS) -->
-            <nav class="main-menu" id="sidebarNav">
+            <nav class="main-menu" id="sidebarNav" role="navigation" aria-label="Main Navigation">
                 <h1>SafeGuard</h1>
                 <div class="logo">
                     <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -238,7 +238,7 @@
             </nav>
 
             <!-- CONTENT SECTION (LEFT 75% + RIGHT 25%) -->
-            <section class="content">
+            <section class="content" role="main">
                 <!-- LEFT CONTENT -->
                 <div class="left-content">
                     <!-- VIEW: DASHBOARD OVERVIEW -->
@@ -246,53 +246,36 @@
                         <!-- ACTIVITIES BENTO GRID -->
                         <div class="activities">
                             <h1>Perimeter Defense Radars</h1>
-                            <div class="activity-container">
-                                <!-- Card 1: URL Scanner -->
-                                <div class="image-container img-one" onclick="switchNav('url-scanner')">
-                                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&auto=format&fit=crop&q=80" alt="URL Scanner" />
-                                    <div class="overlay">
-                                        <h3>URL Radar</h3>
-                                    </div>
+                            <div class="dashboard-metrics-grid">
+                                <div class="sg-metric-card" onclick="switchNav('url-scanner')" role="button" aria-label="URL Scanner — Total Scans">
+                                    <div class="metric-icon"><i class="fa-solid fa-globe"></i></div>
+                                    <div class="metric-value" id="statTotalScans">--</div>
+                                    <div class="metric-label">Total Scans</div>
                                 </div>
-
-                                <!-- Card 2: Phishing NLP -->
-                                <div class="image-container img-two" onclick="switchNav('message-analyzer')">
-                                    <img src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=600&auto=format&fit=crop&q=80" alt="Phishing NLP" />
-                                    <div class="overlay">
-                                        <h3>Phish NLP</h3>
-                                    </div>
+                                <div class="sg-metric-card" onclick="switchNav('url-scanner')" role="button" aria-label="Threats Blocked">
+                                    <div class="metric-icon critical"><i class="fa-solid fa-skull-crossbones"></i></div>
+                                    <div class="metric-value" id="statThreatsBlocked">--</div>
+                                    <div class="metric-label">Threats Blocked</div>
                                 </div>
-
-                                <!-- Card 3: Zero-Day Defense (Large Center Box) -->
-                                <div class="image-container img-three" onclick="switchNav('url-scanner')">
-                                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&auto=format&fit=crop&q=80" alt="Zero-Day Defense" />
-                                    <div class="overlay">
-                                        <h3>Zero-Day Defense Grid</h3>
-                                    </div>
+                                <div class="sg-metric-card" onclick="switchNav('message-analyzer')" role="button" aria-label="Clean Scans">
+                                    <div class="metric-icon safe"><i class="fa-solid fa-circle-check"></i></div>
+                                    <div class="metric-value" id="statCleanScans">--</div>
+                                    <div class="metric-label">Clean Scans</div>
                                 </div>
-
-                                <!-- Card 4: Breach Radar -->
-                                <div class="image-container img-four" onclick="switchNav('email-radar')">
-                                    <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&auto=format&fit=crop&q=80" alt="Breach Radar" />
-                                    <div class="overlay">
-                                        <h3>Breach Radar</h3>
-                                    </div>
+                                <div class="sg-metric-card" onclick="switchNav('dashboard')" role="button" aria-label="Defense Score">
+                                    <div class="metric-icon primary"><i class="fa-solid fa-shield-halved"></i></div>
+                                    <div class="metric-value" id="statDefenseScore">--</div>
+                                    <div class="metric-label">Defense Score</div>
                                 </div>
-
-                                <!-- Card 5: Password Fortress -->
-                                <div class="image-container img-five" onclick="switchNav('password-fortress')">
-                                    <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?w=600&auto=format&fit=crop&q=80" alt="Password Fortress" />
-                                    <div class="overlay">
-                                        <h3>Passwords</h3>
-                                    </div>
+                                <div class="sg-metric-card" onclick="switchNav('email-radar')" role="button" aria-label="Breach Radar">
+                                    <div class="metric-icon warning"><i class="fa-solid fa-database"></i></div>
+                                    <div class="metric-value">HIBp</div>
+                                    <div class="metric-label">Breach Radar</div>
                                 </div>
-
-                                <!-- Card 6: HTTP Headers -->
-                                <div class="image-container img-six" onclick="switchNav('header-inspector')">
-                                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&auto=format&fit=crop&q=80" alt="HTTP Headers" />
-                                    <div class="overlay">
-                                        <h3>HTTP Headers</h3>
-                                    </div>
+                                <div class="sg-metric-card" onclick="switchNav('header-inspector')" role="button" aria-label="HTTP Headers">
+                                    <div class="metric-icon accent"><i class="fa-solid fa-server"></i></div>
+                                    <div class="metric-value">HTTP</div>
+                                    <div class="metric-label">Header Inspector</div>
                                 </div>
                             </div>
                         </div>
@@ -334,7 +317,7 @@
                                     <h2>Live Scan Audit Log</h2>
                                     <p class="audit-sub">Verified threat telemetry records committed to database</p>
                                 </div>
-                                <button class="btn-refresh-sm" onclick="loadRealDashboardTelemetry()">
+                                <button class="btn-refresh-sm" onclick="loadRealDashboardTelemetry()" aria-label="Refresh dashboard data">
                                     <i class="fa-solid fa-arrows-rotate"></i> Refresh DB
                                 </button>
                             </div>
@@ -949,7 +932,7 @@
     <!-- ================= AUTHENTICATION MODAL (LOGIN / REGISTER) ================= -->
     <div class="auth-modal-backdrop" id="authModal" style="display:none;" onclick="handleModalBackdropClick(event)">
         <div class="auth-modal-card" onclick="event.stopPropagation()">
-            <button class="modal-close-btn" onclick="closeAuthModal()">✕</button>
+            <button class="modal-close-btn" onclick="closeAuthModal()" aria-label="Close authentication modal">✕</button>
             
             <div class="auth-modal-tabs">
                 <button class="auth-tab-btn active" id="tabBtnLogin" onclick="switchAuthTab('login')">Sign In</button>
@@ -1036,7 +1019,7 @@
                     <h2 id="videoModalTitle">Loading Course...</h2>
                     <p id="videoModalMeta">Instructor: -- • Duration: --</p>
                 </div>
-                <button class="modal-close-btn" onclick="closeCourseVideo()">✕</button>
+                <button class="modal-close-btn" onclick="closeCourseVideo()" aria-label="Close video modal">✕</button>
             </div>
             
             <div class="video-player-container">
@@ -1061,7 +1044,7 @@
                     <h2 id="materialModalTitle">Loading Document...</h2>
                     <p id="materialModalMeta">Format: -- • Size: --</p>
                 </div>
-                <button class="modal-close-btn" onclick="closeMaterialModal()">✕</button>
+                <button class="modal-close-btn" onclick="closeMaterialModal()" aria-label="Close document modal">✕</button>
             </div>
             <div class="material-modal-body">
                 <p id="materialModalDesc" class="material-desc-text"></p>
@@ -1077,7 +1060,7 @@
     </div>
 
     <!-- Notification Toast -->
-    <div class="soc-toast" id="socToast"></div>
+    <div id="socToast" aria-live="polite" aria-atomic="true"></div>
 
     <script src="/static/js/app.js"></script>
 </body>
