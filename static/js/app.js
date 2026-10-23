@@ -10,10 +10,33 @@ let telemetryCache = null;
 // ============================================================================
 // API FETCH WRAPPER (CSRF-aware)
 // ============================================================================
+// Fetches the CSRF token from /api/csrf-token on first use, caches it in
+// memory, then automatically injects the X-CSRF-Token header on every POST.
+// This means all existing code just calls apiFetch() instead of fetch() and
+// CSRF is handled transparently.
+let _csrfToken = null;
+
+async function _ensureCsrfToken() {
+    if (_csrfToken) return _csrfToken;
+    try {
+        const res = await fetch('/api/csrf-token');
+        const json = await res.json();
+        if (json && json.csrf_token) {
+            _csrfToken = json.csrf_token;
+        }
+    } catch (e) {
+        console.warn('Could not fetch CSRF token:', e);
+    }
+    return _csrfToken;
+}
+
 async function apiFetch(url, options = {}) {
-    const csrfToken = document.querySelector('meta[name=csrf-token]')?.content || '';
     const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
-    if (csrfToken) headers['X-CSRF-Token'] = csrfToken;
+    // Inject CSRF token on all state-changing requests
+    if (options.method && options.method.toUpperCase() !== 'GET') {
+        const token = await _ensureCsrfToken();
+        if (token) headers['X-CSRF-Token'] = token;
+    }
     return fetch(url, { ...options, headers });
 }
 
@@ -25,6 +48,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     checkAuthState();
+    // Preload the CSRF token so the first scan doesn't wait on an extra round-trip
+    _ensureCsrfToken();
     loadRealDashboardTelemetry();
     loadDashboardTelemetry();
     loadPlaybooks();
@@ -332,7 +357,7 @@ async function handleLoginSubmit(event) {
     btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>AUTHENTICATING...</span>`;
 
     try {
-        const res = await fetch('/api/auth/login', {
+        const res = await apiFetch('/api/auth/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password })
@@ -372,7 +397,7 @@ async function handleRegisterSubmit(event) {
     btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>ENCRYPTING & CREATING...</span>`;
 
     try {
-        const res = await fetch('/api/auth/register', {
+        const res = await apiFetch('/api/auth/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, email, password, role })
@@ -397,7 +422,7 @@ async function handleRegisterSubmit(event) {
 
 async function handleLogout() {
     try {
-        await fetch('/api/auth/logout', { method: 'POST' });
+        await apiFetch('/api/auth/logout', { method: 'POST' });
         showToast('Secure session terminated. Logged out.');
         await checkAuthState();
         await loadRealDashboardTelemetry();
@@ -640,7 +665,7 @@ async function executeUrlScan() {
         if (loaderStage) loaderStage.textContent = 'Stage 3/4: Threat Pattern Heuristics';
         if (loaderSub) loaderSub.textContent = 'Correlating with known brand impersonation, credential harvesting signatures...';
 
-        const res = await fetch('/api/scan/url', {
+        const res = await apiFetch('/api/scan/url', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ url })
@@ -796,7 +821,7 @@ async function executeMessageScan() {
         if (loaderStage) loaderStage.textContent = 'Stage 2/3: Credential Harvester & IOC Matching';
         if (loaderSub) loaderSub.textContent = 'Scanning embedded payment links, fake verification forms, and malware lures...';
 
-        const res = await fetch('/api/scan/message', {
+        const res = await apiFetch('/api/scan/message', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ text })
@@ -900,7 +925,7 @@ async function executeEmailAudit() {
     }
 
     try {
-        const res = await fetch('/api/scan/email', {
+        const res = await apiFetch('/api/scan/email', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email })
@@ -980,7 +1005,7 @@ async function executeHeaderAudit() {
     }
 
     try {
-        const res = await fetch('/api/audit/headers', {
+        const res = await apiFetch('/api/audit/headers', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ url })
@@ -1044,7 +1069,7 @@ function executePasswordAudit() {
         }
 
         try {
-            const res = await fetch('/api/audit/password', {
+            const res = await apiFetch('/api/audit/password', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ password })
@@ -1131,7 +1156,7 @@ async function executeIpAudit() {
     }
 
     try {
-        const res = await fetch('/api/audit/ip', {
+        const res = await apiFetch('/api/audit/ip', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ ip })
@@ -1203,7 +1228,7 @@ async function executeCryptoHashes() {
     }
 
     try {
-        const res = await fetch('/api/crypto/hashes', {
+        const res = await apiFetch('/api/crypto/hashes', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ text })
@@ -1246,7 +1271,7 @@ async function executeHashIdentify() {
     }
 
     try {
-        const res = await fetch('/api/crypto/identify', {
+        const res = await apiFetch('/api/crypto/identify', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ hash })
@@ -1282,7 +1307,7 @@ async function executeTransform(operation) {
     }
 
     try {
-        const res = await fetch('/api/crypto/transform', {
+        const res = await apiFetch('/api/crypto/transform', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ text, operation })
@@ -1768,7 +1793,7 @@ async function submitQuizDrill() {
     }
 
     try {
-        const res = await fetch('/api/learning/quiz/submit', {
+        const res = await apiFetch('/api/learning/quiz/submit', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

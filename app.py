@@ -64,7 +64,9 @@ if not _secret_key:
 app.secret_key = _secret_key
 app.config['JSON_SORT_KEYS'] = False
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024  # 2MB maximum payload security constraint
-app.config['SESSION_COOKIE_SECURE'] = True
+# Session cookie security: Secure=True only over HTTPS (production).
+# In development (HTTP), Secure must be False or the cookie is never sent.
+app.config['SESSION_COOKIE_SECURE'] = not _is_dev
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Strict'
 

@@ -61,7 +61,7 @@
 
             <!-- Right Controls: Status, Quick Scan & Real Auth State -->
             <div class="top-nav-right">
-                <div class="top-defcon-pill">DEFCON 2</div>
+                <div class="top-defcon-pill" role="status" aria-label="Current threat level: DEFCON 2 — Elevated Alert">DEFCON 2</div>
 
                 <button class="top-action-btn" onclick="switchNav('url-scanner')" aria-label="Quick URL Scan">
                     <i class="fa-solid fa-bolt-lightning"></i>
@@ -296,15 +296,15 @@
                                 <div class="personal-bests-container">
                                     <div class="best-item box-one">
                                         <p>Peak Heuristic Speed: 1.2ms</p>
-                                        <i class="fa-solid fa-bolt-lightning" style="font-size: 26px; color: #590b94;"></i>
+                                        <i class="fa-solid fa-bolt-lightning benchmark-icon" style="font-size: 26px;"></i>
                                     </div>
                                     <div class="best-item box-two">
                                         <p id="benchmarkEfficacy">Zero-Day Efficacy: 99.8%</p>
-                                        <i class="fa-solid fa-crosshairs" style="font-size: 24px; color: #9c6007;"></i>
+                                        <i class="fa-solid fa-crosshairs benchmark-icon" style="font-size: 24px;"></i>
                                     </div>
                                     <div class="best-item box-three">
                                         <p id="benchmarkVault">Database Scans: Active</p>
-                                        <i class="fa-solid fa-vault" style="font-size: 24px; color: #0d6e4b;"></i>
+                                        <i class="fa-solid fa-vault benchmark-icon" style="font-size: 24px;"></i>
                                     </div>
                                 </div>
                             </div>
@@ -366,10 +366,10 @@
 
                             <div class="samples-row">
                                 <span class="samples-label">Test Samples:</span>
-                                <button class="sample-chip" onclick="fillUrlSample('http://secure-login-paypal.verify-account-update.tk/signin')">PayPal (.tk)</button>
-                                <button class="sample-chip" onclick="fillUrlSample('https://pаypal.com/security/login')">Homoglyph Attack</button>
-                                <button class="sample-chip" onclick="fillUrlSample('http://192.168.1.105:8080/auth/update.php')">Direct IP Obfuscation</button>
-                                <button class="sample-chip" onclick="fillUrlSample('https://github.com/security')">Legitimate Domain</button>
+                                <button class="sample-chip" onclick="fillUrlSample('http://secure-login-paypal.verify-account-update.tk/signin')" aria-label="Load sample: PayPal phishing on .tk TLD">PayPal (.tk)</button>
+                                <button class="sample-chip" onclick="fillUrlSample('https://pаypal.com/security/login')" aria-label="Load sample: Homoglyph Cyrillic PayPal attack">Homoglyph Attack</button>
+                                <button class="sample-chip" onclick="fillUrlSample('http://192.168.1.105:8080/auth/update.php')" aria-label="Load sample: Direct IP address obfuscation">Direct IP Obfuscation</button>
+                                <button class="sample-chip" onclick="fillUrlSample('https://github.com/security')" aria-label="Load sample: Legitimate GitHub domain">Legitimate Domain</button>
                             </div>
 
                             <!-- Real-time Scan Loading Indicator -->
@@ -439,9 +439,9 @@
                             <div class="card-bottom-actions">
                                 <div class="samples-row" style="margin: 0;">
                                     <span class="samples-label">Samples:</span>
-                                    <button class="sample-chip" onclick="fillMessageSample('bank_urgent')">Bank Account Lock</button>
-                                    <button class="sample-chip" onclick="fillMessageSample('delivery')">USPS Unpaid Fee</button>
-                                    <button class="sample-chip" onclick="fillMessageSample('crypto')">Bitcoin Prize Lure</button>
+                                    <button class="sample-chip" onclick="fillMessageSample('bank_urgent')" aria-label="Load sample: Urgent bank account lock message">Bank Account Lock</button>
+                                    <button class="sample-chip" onclick="fillMessageSample('delivery')" aria-label="Load sample: USPS unpaid customs fee scam">USPS Unpaid Fee</button>
+                                    <button class="sample-chip" onclick="fillMessageSample('crypto')" aria-label="Load sample: Bitcoin prize lure">Bitcoin Prize Lure</button>
                                 </div>
                                 <button class="btn-primary" id="btnRunMsgScan" onclick="executeMessageScan()" aria-label="Analyze message for phishing vectors">
                                     <i class="fa-solid fa-brain"></i>
@@ -457,7 +457,7 @@
                                     <div class="loader-bar-wrap">
                                         <div class="loader-bar-fill" id="msgLoaderBar"></div>
                                     </div>
-                                    <div class="loader-sub">Parsing urgency keywords and coercive authority tokens</div>
+                                    <div class="loader-sub" id="msgLoaderSub">Parsing urgency keywords and coercive authority tokens</div>
                                 </div>
                             </div>
 
@@ -908,11 +908,11 @@
                             </div>
                             <div class="best-item box-two">
                                 <p>Zero-Day Efficacy: 99.8%</p>
-                                <i class="fa-solid fa-crosshairs" style="font-size: 20px; color: #9c6007;"></i>
+                                <i class="fa-solid fa-crosshairs benchmark-icon" style="font-size: 20px;"></i>
                             </div>
                             <div class="best-item box-three">
                                 <p>Persistence Engine: Active</p>
-                                <i class="fa-solid fa-vault" style="font-size: 20px; color: #0d6e4b;"></i>
+                                <i class="fa-solid fa-vault benchmark-icon" style="font-size: 20px;"></i>
                             </div>
                         </div>
                     </div>

@@ -1546,6 +1546,11 @@ input[type='password'].soc-input {
 .box-two { border-left: 3px solid var(--color-warning); }
 .box-three { border-left: 3px solid var(--color-safe); }
 
+/* Icon colors derived from the parent box design tokens — no hardcoded hex */
+.box-one .benchmark-icon  { color: var(--color-accent); }
+.box-two .benchmark-icon  { color: var(--color-warning); }
+.box-three .benchmark-icon { color: var(--color-safe); }
+
 /* =============================================================================
    SCANS AUDIT SECTION
    ============================================================================= */
