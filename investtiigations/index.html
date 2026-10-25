@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080d16">
+  <title>Interactive Investigations | SafeGuard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="../index.html">
+      <span class="brand-icon">S</span>
+      <span>SAFEGUARD <small>CYBER INTELLIGENCE</small></span>
+    </a>
+    <div class="operator">
+      <span class="status-dot"></span>
+      TRAINING ENVIRONMENT
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="hero">
+      <p class="eyebrow">FIELD OPERATIONS / 001</p>
+      <h1>Interactive <span>Investigations.</span></h1>
+      <p class="intro">
+        Follow the evidence. Question assumptions. Make the call.
+        Every case is fictional and designed for safe cybersecurity training.
+      </p>
+      <div class="stats">
+        <div class="stat">
+          <span class="stat-label">CASES AVAILABLE</span>
+          <strong id="case-count">03</strong>
+        </div>
+        <div class="stat">
+          <span class="stat-label">CASES SOLVED</span>
+          <strong id="solved-count">00</strong>
+        </div>
+        <div class="stat">
+          <span class="stat-label">EXPERIENCE POINTS</span>
+          <strong id="xp-count">000</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="workspace">
+      <aside class="case-panel">
+        <div class="panel-heading">
+          <span>MISSION DIRECTORY</span>
+          <span class="live-label">● LIVE</span>
+        </div>
+        <div id="case-list" class="case-list"></div>
+        <p class="sidebar-note">
+          TRAINING MODE<br>
+          No real systems are accessed.
+        </p>
+      </aside>
+
+      <section class="investigation-panel" aria-live="polite">
+        <div id="case-content">
+          <div class="empty-state">
+            <span class="big-symbol">⌕</span>
+            <h2>Select an investigation</h2>
+            <p>Choose a case from the mission directory to review its evidence.</p>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <footer>
+      <span>SAFEGUARD // EDUCATIONAL SIMULATION</span>
+      <span>AUTHORIZED TRAINING ONLY</span>
+    </footer>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
