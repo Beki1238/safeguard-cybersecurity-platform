@@ -1,4 +1,4 @@
-# SafeGuard — cPanel Deployment Guide
+# Gasha — cPanel Deployment Guide
 ### Enterprise Cybersecurity & Threat Intelligence Platform
 
 This platform is architected with a native **Python WSGI (Phusion Passenger)** backend that integrates cleanly into standard cPanel shared hosting, VPS, or dedicated servers.
@@ -19,7 +19,7 @@ This platform is architected with a native **Python WSGI (Phusion Passenger)** b
 3. Fill in the fields:
    - **Python version**: Select **3.10**, **3.11**, **3.12**, or **3.13**.
    - **Application root**: Enter the folder path (e.g. `safeguard`).
-   - **Application URL**: Select your domain or subdomain (e.g. `safeguard.yourdomain.com`).
+   - **Application URL**: Select your domain or subdomain (e.g. `gasha.yourdomain.com`).
    - **Application startup file**: `passenger_wsgi.py`
    - **Application Entry point**: `application`
 4. Click **CREATE** (in the top right).
@@ -45,12 +45,12 @@ from app import app as application
 
 ### Step 5: Restart the Python App
 1. In the "Setup Python App" screen, click **Restart** on your application.
-2. Visit your domain URL in the browser (e.g., `https://safeguard.yourdomain.com`).
-3. You should see the SafeGuard Cyber Command Center running live with full API capabilities!
+2. Visit your domain URL in the browser (e.g., `https://gasha.yourdomain.com`).
+3. You should see the Gasha Cyber Command Center running live with full API capabilities!
 
 ---
 
 ## 🔒 Security Hardening in cPanel
 - **SSL Certificate**: Enable **cPanel AutoSSL** / Let's Encrypt for HTTPS.
-- **WAF / ModSecurity**: SafeGuard works alongside cPanel's ModSecurity.
+- **WAF / ModSecurity**: Gasha works alongside cPanel's ModSecurity.
 - **Firewall**: The built-in sliding window rate limiter protects endpoints from bot flood.

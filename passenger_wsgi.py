@@ -1,5 +1,5 @@
 """
-SafeGuard — cPanel / Phusion Passenger WSGI Entry Point
+Gasha — cPanel / Phusion Passenger WSGI Entry Point
 =========================================================
 This file is ONLY for cPanel hosting using the "Setup Python App" feature
 (Phusion Passenger / CloudLinux). cPanel auto-detects passenger_wsgi.py.

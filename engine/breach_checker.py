@@ -1,5 +1,5 @@
 """
-SafeGuard Email Breach & Domain Exposure Intelligence Engine
+Gasha Email Breach & Domain Exposure Intelligence Engine
 Audits emails for disposable domains and RFC 5322 format validity.
 
 Password breach checks use the HIBP k-anonymity range API — the full password
@@ -15,7 +15,7 @@ import hashlib
 import logging
 import requests
 
-logger = logging.getLogger("safeguard.breach_checker")
+logger = logging.getLogger("gasha.breach_checker")
 
 DISPOSABLE_DOMAINS = {
     'mailinator.com', '10minutemail.com', 'guerrillamail.com', 'trashmail.com',

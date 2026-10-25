@@ -1,5 +1,5 @@
 """
-SafeGuard IP Intelligence & Autonomous System Network Engine
+Gasha IP Intelligence & Autonomous System Network Engine
 Evaluates IPv4/IPv6 addresses using real ip-api.com geolocation and threat signals.
 
 Free tier: 45 requests/minute, no API key required.
@@ -10,7 +10,7 @@ import ipaddress
 import logging
 import requests
 
-logger = logging.getLogger("safeguard.ip_intel")
+logger = logging.getLogger("gasha.ip_intel")
 
 # Fields requested from ip-api.com
 _IPAPI_URL = (
@@ -74,7 +74,7 @@ def audit_ip(ip_str: str) -> dict:
         resp = requests.get(
             _IPAPI_URL.format(ip=ip_str),
             timeout=5,
-            headers={"User-Agent": "SafeGuard-CyberIntel/2.4"}
+            headers={"User-Agent": "Gasha-CyberIntel/2.4"}
         )
         resp.raise_for_status()
         data = resp.json()

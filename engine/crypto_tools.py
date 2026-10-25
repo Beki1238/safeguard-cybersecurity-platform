@@ -1,5 +1,5 @@
 """
-SafeGuard Cryptographic Primitives & Hashing Toolkit
+Gasha Cryptographic Primitives & Hashing Toolkit
 Generates cryptographically secure hashes, analyzes digests, and handles encodings.
 """
 

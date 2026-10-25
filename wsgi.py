@@ -1,5 +1,5 @@
 """
-SafeGuard — Standard WSGI Entry Point
+Gasha — Standard WSGI Entry Point
 ======================================
 Use this file when deploying with any standard WSGI server:
 

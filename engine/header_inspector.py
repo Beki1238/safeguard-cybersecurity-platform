@@ -1,5 +1,5 @@
 """
-SafeGuard HTTP Security Headers & Transport Layer Inspector
+Gasha HTTP Security Headers & Transport Layer Inspector
 Audits website security headers, transport layer compliance, and information leakage.
 
 A live HTTP request is made to the target host. If the request fails (firewall,
@@ -78,7 +78,7 @@ def inspect_headers(target_url: str) -> dict:
 
         req = urllib.request.Request(
             target_url,
-            headers={'User-Agent': 'SafeGuard-CyberIntel-Scanner/2.4 (SecurityAudit; Enterprise)'}
+            headers={'User-Agent': 'Gasha-CyberIntel-Scanner/2.4 (SecurityAudit; Enterprise)'}
         )
         with urllib.request.urlopen(req, timeout=6, context=ctx) as response:
             status_code = response.getcode()

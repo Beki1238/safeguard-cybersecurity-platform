@@ -1,5 +1,5 @@
 ﻿"""
-SafeGuard MySQL Enterprise Database Management Layer
+Gasha MySQL Enterprise Database Management Layer
 Connects to local MariaDB/MySQL (XAMPP/cPanel), handles schema migrations,
 user authentication hashing, and scan telemetry persistence.
 
@@ -15,7 +15,7 @@ import pymysql
 from pymysql.cursors import DictCursor
 from werkzeug.security import generate_password_hash, check_password_hash
 
-logger = logging.getLogger("safeguard.database")
+logger = logging.getLogger("gasha.database")
 
 # Configuration from environment with local defaults
 DB_HOST     = os.environ.get('DB_HOST', '127.0.0.1')
@@ -75,7 +75,7 @@ def get_server_connection():
 
 def get_db_connection():
     """
-    Returns a connection to the SafeGuard database.
+    Returns a connection to the Gasha database.
     Uses the connection pool when DBUtils is available; falls back to a
     direct pymysql connection otherwise.
     """
@@ -259,7 +259,7 @@ def initialize_database():
                     cursor.execute("""
                         INSERT INTO `users` (`username`, `email`, `password_hash`, `role`)
                         VALUES (%s, %s, %s, %s);
-                    """, ('admin', 'admin@safeguard.local', default_pw, 'Lead SecOps Officer'))
+                    """, ('admin', 'admin@gasha.local', default_pw, 'Lead SecOps Officer'))
 
             # Seed incidents if empty
             cursor.execute("SELECT COUNT(*) as cnt FROM `incidents`;")
