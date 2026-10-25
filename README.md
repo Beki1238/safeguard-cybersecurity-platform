@@ -22,6 +22,15 @@
 Built with a native **Python WSGI / Flask** architecture and **MySQL/MariaDB** persistence, Gasha can run locally on bare-metal workstations, scale across enterprise cloud instances with **Gunicorn**, or seamlessly deploy onto **cPanel shared hosting & VPS** via **Phusion Passenger**.
 
 ---
+Behind the Gasha. Members who helped in making the gasha platform come to life: 
+
+Name:                           CTC
+1. Bereket Bahiru.       1144-26
+2. Samuel Teshome.  2631-26
+3. Rihana Abdu.          6285-26 
+4. Betselot Solomon.  2200-26
+5. Natinael Kifle :         1532-26
+6. Fikre Hailemariam:  1751-26
 
 ## ⚡ Core Capabilities & Architectural Pillars
 
