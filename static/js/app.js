@@ -1,5 +1,5 @@
 /**
- * SafeGuard — Enterprise Threat Operations Center Client Engine
+ * Gasha — Enterprise Threat Operations Center Client Engine
  * Asynchronously interacts with Python WSGI / Flask Backend APIs
  */
 
@@ -159,10 +159,7 @@ function switchNav(targetId) {
         loadPlaybooks();
     }
 
-    const leftContent = document.querySelector('.left-content');
-    if (leftContent) {
-        leftContent.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function toggleMobileNav() {
@@ -354,7 +351,7 @@ async function handleLoginSubmit(event) {
     }
 
     btn.disabled = true;
-    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>AUTHENTICATING...</span>`;
+    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Signing in…</span>`;
 
     try {
         const res = await apiFetch('/api/auth/login', {
@@ -376,7 +373,7 @@ async function handleLoginSubmit(event) {
         showToast(err.message, true);
     } finally {
         btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> <span>SIGN IN TO WORKSTATION</span>`;
+        btn.innerHTML = `<span>Sign in</span>`;
     }
 }
 
@@ -394,7 +391,7 @@ async function handleRegisterSubmit(event) {
     }
 
     btn.disabled = true;
-    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>ENCRYPTING & CREATING...</span>`;
+    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Creating account…</span>`;
 
     try {
         const res = await apiFetch('/api/auth/register', {
@@ -416,7 +413,7 @@ async function handleRegisterSubmit(event) {
         showToast(err.message, true);
     } finally {
         btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-user-plus"></i> <span>CREATE SECURE ACCOUNT</span>`;
+        btn.innerHTML = `<span>Create account</span>`;
     }
 }
 
@@ -480,7 +477,7 @@ async function loadRealDashboardTelemetry() {
                     const dateStr = s.created_at ? new Date(s.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : 'Just now';
                     return `
                         <tr>
-                            <td style="font-family: var(--font-mono); font-weight: 700; color: rgb(73, 57, 113);">#${s.id}</td>
+                            <td style="font-family: var(--font-mono); font-weight: 700; color: var(--accent);">#${s.id}</td>
                             <td><span style="font-weight: 700; font-size: 11px; text-transform: uppercase; color: #475569;">${escapeHtml(s.scan_type)}</span></td>
                             <td title="${escapeHtml(s.target_input || '')}" style="font-family: var(--font-mono); font-size: 12px; color: #1e293b;">${escapeHtml(targetShort)}</td>
                             <td><span class="threat-score-pill ${pillClass}">${escapeHtml(s.verdict || 'EVALUATED')}</span></td>
@@ -541,12 +538,12 @@ async function loadRealDashboardTelemetry() {
                         </div>
                         <img class="card-img" src="${img}" alt="${escapeHtml(feed.title)}" />
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; padding:0 2px;">
-                            <span style="font-weight:700; font-size:11px; color:rgb(73,57,113); font-family:var(--font-mono);">${escapeHtml(feed.preview_tag || 'THREAT INTEL')}</span>
+                            <span style="font-weight:700; font-size:11px; color:var(--accent); font-family:var(--font-mono);">${escapeHtml(feed.preview_tag || 'THREAT INTEL')}</span>
                             <span style="font-size:10px; font-weight:800; padding:2px 7px; border-radius:6px; background:#fee2e2; color:#dc2626; border:1px solid #fca5a5;">${escapeHtml(feed.severity_badge || 'ALERT')}</span>
                         </div>
                         <p style="font-weight:700; color:#1e293b; margin-bottom:4px; font-size:0.95rem;">${escapeHtml(feed.title)}</p>
                         <p style="font-size:12px; color:#64748b; line-height:1.4; margin-bottom:6px;">${escapeHtml(feed.description)}</p>
-                        ${feed.footer_note ? `<div style="font-size:11px; color:#475569; background:#f1f5f9; padding:6px 8px; border-radius:8px; margin:6px 0 8px; font-family:var(--font-mono);"><i class="fa-solid fa-circle-info" style="color:rgb(73,57,113);"></i> ${escapeHtml(feed.footer_note)}</div>` : ''}
+                        ${feed.footer_note ? `<div style="font-size:11px; color:#475569; background:#f1f5f9; padding:6px 8px; border-radius:8px; margin:6px 0 8px; font-family:var(--font-mono);"><i class="fa-solid fa-circle-info" style="color:var(--accent);"></i> ${escapeHtml(feed.footer_note)}</div>` : ''}
                         <button class="btn" style="margin-top:4px; width:100%; font-size:0.9rem; padding:6px 14px;" onclick="showToast('Investigating: ${escapeHtml(feed.title)}')">Investigate Feed</button>
                     </div>
                 `;
@@ -574,7 +571,7 @@ async function loadDashboardTelemetry() {
         if (cveBody && data.active_global_cves) {
             cveBody.innerHTML = data.active_global_cves.map(c => `
                 <tr>
-                    <td style="font-family: var(--font-mono); font-weight: 700; color: #ffffff;">${c.cve}</td>
+                    <td style="font-family: var(--font-mono); font-weight: 600; color: var(--text);">${c.cve}</td>
                     <td>
                         <span class="badge-pill ${c.cvss >= 9.0 ? 'pill-critical' : 'pill-warning'}">
                             CVSS ${c.cvss.toFixed(1)}
@@ -691,7 +688,7 @@ async function executeUrlScan() {
         showToast(`Scan error: ${err.message}`, true);
     } finally {
         btn.disabled = false;
-        btn.querySelector('span').textContent = 'EXECUTE SCAN';
+        btn.querySelector('span').textContent = 'Scan';
     }
 }
 
@@ -1039,7 +1036,7 @@ function renderHeaderResults(data) {
     const tbody = document.getElementById('headersTableBody');
     tbody.innerHTML = data.audit_results.map(h => `
         <tr>
-            <td style="font-family: var(--font-mono); font-weight: 600; color: #ffffff;">${h.header}</td>
+            <td style="font-family: var(--font-mono); font-weight: 500; color: var(--text);">${h.header}</td>
             <td><span class="badge-pill ${h.importance === 'CRITICAL' ? 'pill-critical' : 'pill-warning'}">${h.importance}</span></td>
             <td>
                 <span class="badge-pill ${h.present ? 'pill-safe' : 'pill-critical'}">
@@ -1583,7 +1580,7 @@ function openCourseVideo(courseId) {
         syllabusList.innerHTML = course.lessons.map((lesson, idx) => `
             <div class="syllabus-item" onclick="showToast('Lesson ${idx + 1}: ${escapeHtml(lesson.title)}')">
                 <div>
-                    <span style="font-family: var(--font-mono); font-weight: 800; color: rgb(73, 57, 113); margin-right: 8px;">#${idx + 1}</span>
+                    <span style="font-family: var(--font-mono); font-weight: 800; color: var(--accent); margin-right: 8px;">#${idx + 1}</span>
                     <strong style="color: #1e293b;">${escapeHtml(lesson.title)}</strong>
                     ${lesson.topics ? `<div style="font-size: 11px; color: #64748b; margin-top: 2px;">Key Focus: ${lesson.topics.map(t => escapeHtml(t)).join(', ')}</div>` : ''}
                 </div>
@@ -1786,7 +1783,7 @@ async function submitQuizDrill() {
         runnerBox.innerHTML = `
             <div style="text-align:center; padding: 40px 20px;">
                 <div class="loader-spinner" style="margin: 0 auto 16px;"></div>
-                <h3 style="color:rgb(73,57,113); font-weight:800;">Evaluating Heuristics & Recording to MySQL...</h3>
+                <h3 style="color:var(--accent); font-weight:800;">Evaluating Heuristics & Recording to MySQL...</h3>
                 <p style="color:#64748b; font-size:13px;">Computing compliance score against certified threat standards.</p>
             </div>
         `;
@@ -1848,7 +1845,7 @@ function renderQuizEvaluationSummary(quiz, result) {
                 </div>
 
                 <div class="feedback-explanation">
-                    <i class="fa-solid fa-shield-halved" style="color:rgb(73,57,113); margin-right:4px;"></i>
+                    <i class="fa-solid fa-shield-halved" style="color:var(--accent); margin-right:4px;"></i>
                     <strong>Technical Defense Analysis:</strong> ${escapeHtml(f.explanation || 'Verified defense principle.')}
                 </div>
             </div>
