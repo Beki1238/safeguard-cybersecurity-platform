@@ -1,5 +1,5 @@
 """
-SafeGuard Social Engineering & Phishing NLP Heuristic Engine
+Gasha Social Engineering & Phishing NLP Heuristic Engine
 Analyzes messages, emails, and SMS for psychological manipulation, credential harvesting, and scam patterns.
 """
 
