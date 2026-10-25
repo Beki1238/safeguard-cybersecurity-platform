@@ -1,4 +1,4 @@
-# SafeGuard UI Overhaul — Implementation Plan
+# SafeGuard UI Overhaul Implementation Plan
 ## Norman Design Principles / Enterprise Design System
 
 > **Ground rules for the coder**
