@@ -1,5 +1,5 @@
 """
-SafeGuard Threat Intelligence & Incident Response Knowledge Core
+Gasha Threat Intelligence & Incident Response Knowledge Core
 Live CVE data sourced from CISA Known Exploited Vulnerabilities (KEV) feed.
 CVSS scores enriched via NVD REST API v2.0. Both caches use a 1-hour TTL.
 
@@ -123,7 +123,7 @@ def _get_nvd_cvss(cve_id: str) -> float | None:
     if cve_id in _nvd_cvss_cache:
         return _nvd_cvss_cache[cve_id]
 
-    headers = {"User-Agent": "SafeGuard-CyberIntel/2.4"}
+    headers = {"User-Agent": "Gasha-CyberIntel/2.4"}
     nvd_key = os.environ.get("NVD_API_KEY", "")
     if nvd_key:
         headers["apiKey"] = nvd_key
@@ -153,7 +153,7 @@ def _get_nvd_cvss(cve_id: str) -> float | None:
                     return float(score)
 
     except Exception as e:
-        print(f"[SafeGuard ThreatIntel] NVD CVSS lookup failed for {cve_id}: {e}")
+        print(f"[Gasha ThreatIntel] NVD CVSS lookup failed for {cve_id}: {e}")
 
     _nvd_cvss_cache[cve_id] = None
     return None
@@ -172,12 +172,12 @@ def _fetch_live_kev() -> bool:
         resp = requests.get(
             "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json",
             timeout=10,
-            headers={"User-Agent": "SafeGuard-CyberIntel/2.4"}
+            headers={"User-Agent": "Gasha-CyberIntel/2.4"}
         )
         resp.raise_for_status()
         kev_data = resp.json()
     except Exception as e:
-        print(f"[SafeGuard ThreatIntel] CISA KEV fetch failed: {e}")
+        print(f"[Gasha ThreatIntel] CISA KEV fetch failed: {e}")
         return False
 
     total_count = kev_data.get("count", 0)
@@ -218,7 +218,7 @@ def _fetch_live_kev() -> bool:
     _intel_cache["fetched_at"] = time.time()
 
     print(
-        f"[SafeGuard ThreatIntel] CISA KEV refreshed — "
+        f"[Gasha ThreatIntel] CISA KEV refreshed — "
         f"{total_count} total KEVs in catalogue, displaying 6 most recent."
     )
     return True
