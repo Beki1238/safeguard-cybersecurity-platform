@@ -1,0 +1,109 @@
+{
+  "platform": "SafeGuard",
+  "module": "Interactive Investigations",
+  "version": "1.0.0",
+  "notice": "All cases are fictional and designed for safe cybersecurity education.",
+  "cases": [
+    {
+      "id": "SG-001",
+      "title": "The Midnight Login",
+      "category": "Log Analysis",
+      "difficulty": "Beginner",
+      "points": 100,
+      "scenario": "A security analyst notices an unfamiliar login to a fictional company archive outside normal working hours.",
+      "evidence": {
+        "date": "2026-10-12",
+        "username": "analyst01",
+        "source_ip": "203.0.113.42",
+        "login_time": "02:14 UTC",
+        "location": "Unrecognized",
+        "result": "SUCCESS",
+        "usual_login_window": "08:00-18:00 UTC"
+      },
+      "question": "Which observation is the strongest reason to investigate this login?",
+      "answer_type": "multiple_choice",
+      "options": [
+        "The username contains numbers",
+        "The login succeeded outside the usual hours from an unrecognized source",
+        "The log contains a timestamp",
+        "The account name is analyst01"
+      ],
+      "correct_answer": "The login succeeded outside the usual hours from an unrecognized source",
+      "explanation": "The unusual time and unrecognized source are suspicious indicators. However, they do not prove the account was compromised. The analyst should review additional authentication logs and confirm whether the activity was authorized.",
+      "learning_objective": "Identify unusual authentication activity without treating a single indicator as proof of an attack.",
+      "status": "available"
+    },
+    {
+      "id": "SG-002",
+      "title": "The Suspicious Link",
+      "category": "Phishing Analysis",
+      "difficulty": "Beginner",
+      "points": 100,
+      "scenario": "An employee receives an email claiming that their account will be suspended unless they verify their details immediately.",
+      "evidence": {
+        "sender": "security-alert@example.invalid",
+        "subject": "URGENT: Verify Your Account Now",
+        "message_excerpt": "Your account will be disabled in 10 minutes. Click the link to verify your identity.",
+        "link": "https://login-example.invalid/verify",
+        "requested_action": "Enter account credentials",
+        "sender_verified": false
+      },
+      "question": "Which combination of clues most strongly suggests a possible phishing attempt?",
+      "answer_type": "multiple_choice",
+      "options": [
+        "The email has a subject line",
+        "The message creates urgency and requests credentials through an unverified link",
+        "The email contains a greeting",
+        "The message was delivered electronically"
+      ],
+      "correct_answer": "The message creates urgency and requests credentials through an unverified link",
+      "explanation": "Artificial urgency and credential requests through unverified links are common phishing indicators. Do not click the link or enter credentials. Verify the request through a trusted, independently obtained contact channel.",
+      "learning_objective": "Recognize social engineering indicators and choose a safe verification method.",
+      "status": "available"
+    },
+    {
+      "id": "SG-003",
+      "title": "The File Integrity Alert",
+      "category": "Digital Forensics",
+      "difficulty": "Intermediate",
+      "points": 200,
+      "scenario": "A digital forensics analyst compares the SHA-256 hash of a file with a previously recorded trusted hash.",
+      "evidence": {
+        "file_name": "quarterly_report.txt",
+        "trusted_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "current_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "file_source": "Fictional company archive"
+      },
+      "question": "What can the analyst conclude from the hash comparison alone?",
+      "answer_type": "multiple_choice",
+      "options": [
+        "The file definitely contains malware",
+        "The file was definitely modified by an attacker",
+        "The current file does not match the recorded trusted hash",
+        "The file is safe because it is a text file"
+      ],
+      "correct_answer": "The current file does not match the recorded trusted hash",
+      "explanation": "Different SHA-256 hashes indicate that the file contents do not match the trusted reference, assuming both hashes were calculated correctly. This alone does not establish why the file differs or whether it is malicious. Preserve the evidence and investigate its origin and history.",
+      "learning_objective": "Interpret file integrity evidence accurately and distinguish an observation from an unproven conclusion.",
+      "status": "available"
+    }
+  ]
+}
+        "comparison_result": "MISMATCH",
+"file_source": "Fictional company archive"
+      },
+      "question": "What can the analyst conclude from the hash comparison alone?",
+      "answer_type": "multiple_choice",
+      "options": [
+        "The file definitely contains malware",
+        "The file was definitely modified by an attacker",
+        "The current file does not match the recorded trusted hash",
+        "The file is safe because it is a text file"
+      ],
+      "correct_answer": "The current file does not match the recorded trusted hash",
+      "explanation": "Different SHA-256 hashes indicate that the file contents do not match the trusted reference, assuming both hashes were calculated correctly. This alone does not establish why the file differs or whether it is malicious. Preserve the evidence and investigate its origin and history.",
+      "learning_objective": "Interpret file integrity evidence accurately and distinguish an observation from an unproven conclusion.",
+      "status": "available"
+    }
+  ]
+}
