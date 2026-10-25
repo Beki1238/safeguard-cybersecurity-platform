@@ -1,5 +1,5 @@
 """
-SafeGuard Password Security & Entropy Audit Engine
+Gasha Password Security & Entropy Audit Engine
 Evaluates entropy, NIST SP 800-63B compliance, brute-force resistance,
 pattern penalties (keyboard walks, leet substitutions, repetition),
 and real breach exposure via HIBP k-anonymity range API.
