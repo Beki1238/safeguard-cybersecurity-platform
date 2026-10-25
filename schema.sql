@@ -1,5 +1,5 @@
 -- ==============================================================================
--- SafeGuard Enterprise Cyber Operations Platform — MySQL / cPanel Schema
+-- Gasha Enterprise Cyber Operations Platform — MySQL / cPanel Schema
 -- ==============================================================================
 
 CREATE DATABASE IF NOT EXISTS `safeguard_db` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
