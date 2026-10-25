@@ -1,7 +1,11 @@
-# 🛡️ SafeGuard — Enterprise Cybersecurity & Threat Intelligence Platform
+<p align="center"><img src="static/img/gasha-logo.svg" alt="Gasha logo" width="120" /></p>
+
+# Gasha — Enterprise Cybersecurity & Threat Intelligence Platform
+
+> **Gasha** (ጋሻ) is the Amharic name for the traditional Ethiopian war shield — a round, hand-made hide shield carried by warriors to turn aside blows. The platform takes its name from it: a defensive layer between you and the threats aimed at you.
 
 <p align="center">
-  <img src="https://img.shields.io/badge/SafeGuard-SOC%20v2.4-7c3aed?style=for-the-badge&logo=shield&logoColor=white" alt="SafeGuard SOC v2.4" />
+  <img src="https://img.shields.io/badge/Gasha-SOC%20v2.4-7c3aed?style=for-the-badge&logo=shield&logoColor=white" alt="Gasha SOC v2.4" />
   <img src="https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python Version" />
   <img src="https://img.shields.io/badge/Backend-Flask%20%7C%20WSGI%20Passenger-000000?style=for-the-badge&logo=flask&logoColor=white" alt="Backend" />
   <img src="https://img.shields.io/badge/Database-MySQL%20%2F%20MariaDB-4479A1?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL" />
@@ -13,9 +17,9 @@
 
 ## 📖 Executive Summary
 
-**SafeGuard** is an enterprise-grade, all-in-one Cybersecurity Operations Center (SOC) and Threat Intelligence Platform. Engineered for SecOps analysts, incident response teams, and organizations seeking proactive defense, SafeGuard combines multi-vector heuristic scanning engines, real-time threat intelligence feeds, MITRE ATT&CK taxonomy mapping, gamified cybersecurity training, and persistent audit logging.
+**Gasha** is an enterprise-grade, all-in-one Cybersecurity Operations Center (SOC) and Threat Intelligence Platform. Engineered for SecOps analysts, incident response teams, and organizations seeking proactive defense, Gasha combines multi-vector heuristic scanning engines, real-time threat intelligence feeds, MITRE ATT&CK taxonomy mapping, gamified cybersecurity training, and persistent audit logging.
 
-Built with a native **Python WSGI / Flask** architecture and **MySQL/MariaDB** persistence, SafeGuard can run locally on bare-metal workstations, scale across enterprise cloud instances with **Gunicorn**, or seamlessly deploy onto **cPanel shared hosting & VPS** via **Phusion Passenger**.
+Built with a native **Python WSGI / Flask** architecture and **MySQL/MariaDB** persistence, Gasha can run locally on bare-metal workstations, scale across enterprise cloud instances with **Gunicorn**, or seamlessly deploy onto **cPanel shared hosting & VPS** via **Phusion Passenger**.
 
 ---
 
@@ -203,7 +207,7 @@ pip install -r requirements.txt
 ```
 
 ### 5. Configure Database & Environment
-SafeGuard automatically connects to local MySQL with default credentials (`127.0.0.1:3306`, user `root`, blank password). If your MySQL server requires specific credentials, configure environment variables:
+Gasha automatically connects to local MySQL with default credentials (`127.0.0.1:3306`, user `root`, blank password). If your MySQL server requires specific credentials, configure environment variables:
 
 #### On Windows (PowerShell):
 ```powershell
@@ -225,7 +229,7 @@ export DB_NAME="safeguard_db"
 export SECRET_KEY="your-custom-production-secret-key"
 ```
 
-> **Automatic Schema Bootstrapping:** SafeGuard automatically provisions the `safeguard_db` database and builds all necessary tables on startup if they do not exist. You can also manually import the schema via:
+> **Automatic Schema Bootstrapping:** Gasha automatically provisions the `safeguard_db` database and builds all necessary tables on startup if they do not exist. You can also manually import the schema via:
 > ```bash
 > mysql -u root -p < schema.sql
 > ```
@@ -243,12 +247,12 @@ http://127.0.0.1:5000
 
 ## 🔑 Default Administrator Credentials
 
-When initialized on an empty database, SafeGuard automatically seeds a default SecOps administrator account:
+When initialized on an empty database, Gasha automatically seeds a default SecOps administrator account:
 
 | Field | Default Value | Note |
 | :--- | :--- | :--- |
 | **Username** | `admin` | Case-insensitive login |
-| **Email** | `admin@safeguard.local` | Primary SOC admin contact |
+| **Email** | `admin@gasha.local` | Primary SOC admin contact |
 | **Password** | `Admin@123456` | Change immediately upon deployment |
 | **Role** | `Lead SecOps Officer` | Unrestricted audit visibility |
 
@@ -294,7 +298,7 @@ All scan and audit operations expose JSON API endpoints protected by sliding-win
 
 ## 🌐 Production & cPanel Deployment
 
-SafeGuard is built to operate flawlessly on shared cPanel hosting (LiteSpeed/Apache with Phusion Passenger) and VPS environments.
+Gasha is built to operate flawlessly on shared cPanel hosting (LiteSpeed/Apache with Phusion Passenger) and VPS environments.
 
 ### 📋 5-Step cPanel Quick Deploy
 
@@ -347,4 +351,4 @@ Contributions, bug reports, and security disclosures are welcome:
 
 ## 📄 License
 
-This project is licensed under the [MIT License](LICENSE). SafeGuard is designed for defensive security analysis, threat intelligence research, and cybersecurity education.
+This project is licensed under the [MIT License](LICENSE). Gasha is designed for defensive security analysis, threat intelligence research, and cybersecurity education.
