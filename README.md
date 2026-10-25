@@ -31,6 +31,8 @@ Name:                           CTC
 4. Betselot Solomon.  2200-26
 5. Natinael Kifle :         1532-26
 6. Fikre Hailemariam:  1751-26
+---
+video - https://drive.google.com/file/d/1Ah7ZTmOpPyFluWXgHDphJGS-913Tb6dN/view?usp=sharing
 
 ## ⚡ Core Capabilities & Architectural Pillars
 
