@@ -3,990 +3,617 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SafeGuard — Cybersecurity & Threat Intelligence Dashboard</title>
-    <meta name="description" content="SafeGuard Cybersecurity & Threat Operations Center. Real-time heuristic URL scanning, phishing detection, breach radar, and MySQL scan auditing.">
+    <title>Gasha</title>
+    <meta name="description" content="Gasha — URL scanning, phishing detection, breach lookup, password auditing and security learning in one place.">
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+    <meta name="theme-color" content="#fafafa">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome 6 — loaded before main.css so icon ::before rules are established first -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="/static/css/main.css">
 </head>
-<body role="application">
+<body>
     <div class="app-wrapper">
-        <!-- ================= TOP RESPONSIVE NAVIGATION BAR ================= -->
-        <header class="desktop-top-nav">
-            <!-- Brand & Mobile Toggle -->
-            <div class="top-nav-left">
-                <button class="top-hamburger-btn" id="mobileMenuToggle" onclick="toggleMobileNav()" title="Toggle Menu" aria-label="Toggle navigation menu">
+        <!-- ================= SIDEBAR ================= -->
+        <nav class="main-menu" id="sidebarNav" aria-label="Main navigation">
+            <div class="brand" onclick="switchNav('dashboard')">
+                <img class="brand-mark" src="/static/img/gasha-mark.svg" alt="" width="30" height="30">
+                <span class="brand-name">Gasha</span>
+            </div>
+
+            <ul>
+                <li class="nav-item active" data-target="dashboard">
+                    <a href="javascript:void(0)"><i class="fa-solid fa-house"></i><span>Overview</span></a>
+                </li>
+            </ul>
+
+            <p class="nav-section">Scanners</p>
+            <ul>
+                <li class="nav-item" data-target="url-scanner">
+                    <a href="javascript:void(0)"><i class="fa-solid fa-globe"></i><span>URL scanner</span></a>
+                </li>
+                <li class="nav-item" data-target="message-analyzer">
+                    <a href="javascript:void(0)"><i class="fa-regular fa-envelope"></i><span>Phishing check</span></a>
+                </li>
+                <li class="nav-item" data-target="email-radar">
+                    <a href="javascript:void(0)"><i class="fa-solid fa-user-shield"></i><span>Breach lookup</span></a>
+                </li>
+                <li class="nav-item" data-target="password-fortress">
+                    <a href="javascript:void(0)"><i class="fa-solid fa-key"></i><span>Password strength</span></a>
+                </li>
+                <li class="nav-item" data-target="header-inspector">
+                    <a href="javascript:void(0)"><i class="fa-solid fa-server"></i><span>HTTP headers</span></a>
+                </li>
+                <li class="nav-item" data-target="ip-intelligence">
+                    <a href="javascript:void(0)"><i class="fa-solid fa-network-wired"></i><span>IP lookup</span></a>
+                </li>
+                <li class="nav-item" data-target="crypto-suite">
+                    <a href="javascript:void(0)"><i class="fa-solid fa-hashtag"></i><span>Hash &amp; encode</span></a>
+                </li>
+            </ul>
+
+            <p class="nav-section">Learn &amp; respond</p>
+            <ul>
+                <li class="nav-item" data-target="learning-journey">
+                    <a href="javascript:void(0)"><i class="fa-solid fa-graduation-cap"></i><span>Academy</span></a>
+                </li>
+                <li class="nav-item" data-target="incident-playbooks">
+                    <a href="javascript:void(0)"><i class="fa-solid fa-list-check"></i><span>Playbooks</span></a>
+                </li>
+            </ul>
+        </nav>
+        <div class="nav-scrim" onclick="toggleMobileNav()"></div>
+
+        <div class="main-column">
+            <!-- ================= TOP BAR ================= -->
+            <header class="topbar">
+                <button class="icon-btn mobile-only" id="mobileMenuToggle" onclick="toggleMobileNav()" aria-label="Toggle navigation menu">
                     <i class="fa-solid fa-bars"></i>
                 </button>
-
-                <div class="top-brand" onclick="switchNav('dashboard')">
-                    <div class="top-brand-icon">
-                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                            <path d="m9 12 2 2 4-4"/>
-                        </svg>
-                    </div>
-                    <div class="top-brand-text">
-                        <span class="top-brand-title">SafeGuard</span>
-                        <span class="top-brand-badge">SOC v2.4</span>
-                    </div>
-                </div>
-
                 <div class="top-search-wrap">
-                    <i class="fa-solid fa-magnifying-glass top-search-icon"></i>
-                    <input type="text" id="omniSearchInput" class="top-search-input" placeholder="Search IOCs, CVEs, domains, hashes, IPs... (Press Enter)" onkeydown="handleTopSearch(event)" aria-label="Search IOCs, CVEs, domains, hashes, and IPs">
-                    <span class="top-search-kbd">↵ Enter</span>
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="omniSearchInput" class="top-search-input" placeholder="Search a URL, IP, email, hash or message…" onkeydown="handleTopSearch(event)" aria-label="Search URLs, IPs, emails, hashes or messages">
+                    <kbd>↵</kbd>
                 </div>
-            </div>
+                <div class="top-auth-container" id="topAuthContainer"></div>
+            </header>
 
-            <!-- Central Nav Links (Streamlined & Fully Functional) -->
-            <div class="top-nav-center">
-                <nav class="top-links-menu">
-                    <button class="top-link-btn active" id="topNav-dashboard" onclick="switchNav('dashboard')">
-                        <i class="fa-solid fa-gauge-high"></i>
-                        <span>Operations</span>
-                    </button>
-                    <button class="top-link-btn" id="topNav-learning-journey" onclick="switchNav('learning-journey')">
-                        <i class="fa-solid fa-graduation-cap"></i>
-                        <span>Learning Academy</span>
-                    </button>
-                    <button class="top-link-btn" id="topNav-incident-playbooks" onclick="switchNav('incident-playbooks')">
-                        <i class="fa-solid fa-shield-halved"></i>
-                        <span>Incident Center</span>
-                    </button>
-                </nav>
-            </div>
-
-            <!-- Right Controls: Status, Quick Scan & Real Auth State -->
-            <div class="top-nav-right">
-                <div class="top-defcon-pill" role="status" aria-label="Current threat level: DEFCON 2 — Elevated Alert">DEFCON 2</div>
-
-                <button class="top-action-btn" onclick="switchNav('url-scanner')" aria-label="Quick URL Scan">
-                    <i class="fa-solid fa-bolt-lightning"></i>
-                    <span>Quick Scan</span>
-                </button>
-
-                <!-- Auth Container: Real User Profile or Sign In Buttons -->
-                <div class="top-auth-container" id="topAuthContainer">
-                    <!-- Populated dynamically via JS from /api/auth/me -->
-                </div>
-            </div>
-        </header>
-
-        <!-- ================= MAIN DASHBOARD CONTAINER ================= -->
-        <main>
-            <!-- SIDEBAR MAIN MENU (PURPLE INVERTED TABS) -->
-            <nav class="main-menu" id="sidebarNav" role="navigation" aria-label="Main Navigation">
-                <h1>SafeGuard</h1>
-                <div class="logo">
-                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                        <path d="m9 12 2 2 4-4"/>
-                    </svg>
-                </div>
-                <ul>
-                    <li class="nav-item active" data-target="dashboard">
-                        <b></b>
-                        <b></b>
-                        <a href="javascript:void(0)" onclick="switchNav('dashboard')">
-                            <span class="nav-icon">
-                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                                    <polyline points="9 22 9 12 15 12 15 22"/>
-                                </svg>
-                            </span>
-                            <span class="nav-text">Home</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item" data-target="url-scanner">
-                        <b></b>
-                        <b></b>
-                        <a href="javascript:void(0)" onclick="switchNav('url-scanner')">
-                            <span class="nav-icon">
-                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="12" cy="12" r="10"/>
-                                    <line x1="2" y1="12" x2="22" y2="12"/>
-                                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-                                </svg>
-                            </span>
-                            <span class="nav-text">URL Radar</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item" data-target="message-analyzer">
-                        <b></b>
-                        <b></b>
-                        <a href="javascript:void(0)" onclick="switchNav('message-analyzer')">
-                            <span class="nav-icon">
-                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M21.2 8.4c.5.38.8.97.8 1.6v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V10a2 2 0 0 1 .8-1.6l8-6a2 2 0 0 1 2.4 0l8 6Z"/>
-                                    <path d="m22 10-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 10"/>
-                                </svg>
-                            </span>
-                            <span class="nav-text">Phish NLP</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item" data-target="email-radar">
-                        <b></b>
-                        <b></b>
-                        <a href="javascript:void(0)" onclick="switchNav('email-radar')">
-                            <span class="nav-icon">
-                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                                    <circle cx="12" cy="11" r="3"/>
-                                </svg>
-                            </span>
-                            <span class="nav-text">Breach Radar</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item" data-target="password-fortress">
-                        <b></b>
-                        <b></b>
-                        <a href="javascript:void(0)" onclick="switchNav('password-fortress')">
-                            <span class="nav-icon">
-                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                                    <circle cx="12" cy="16" r="1"/>
-                                </svg>
-                            </span>
-                            <span class="nav-text">Passwords</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item" data-target="header-inspector">
-                        <b></b>
-                        <b></b>
-                        <a href="javascript:void(0)" onclick="switchNav('header-inspector')">
-                            <span class="nav-icon">
-                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <rect x="2" y="2" width="20" height="8" rx="2" ry="2"/>
-                                    <rect x="2" y="14" width="20" height="8" rx="2" ry="2"/>
-                                    <line x1="6" y1="6" x2="6.01" y2="6"/>
-                                    <line x1="6" y1="18" x2="6.01" y2="18"/>
-                                </svg>
-                            </span>
-                            <span class="nav-text">Headers</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item" data-target="ip-intelligence">
-                        <b></b>
-                        <b></b>
-                        <a href="javascript:void(0)" onclick="switchNav('ip-intelligence')">
-                            <span class="nav-icon">
-                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <rect x="16" y="16" width="6" height="6" rx="1"/>
-                                    <rect x="2" y="16" width="6" height="6" rx="1"/>
-                                    <rect x="9" y="2" width="6" height="6" rx="1"/>
-                                    <path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3"/>
-                                    <path d="M12 12V8"/>
-                                </svg>
-                            </span>
-                            <span class="nav-text">IP Intel</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item" data-target="crypto-suite">
-                        <b></b>
-                        <b></b>
-                        <a href="javascript:void(0)" onclick="switchNav('crypto-suite')">
-                            <span class="nav-icon">
-                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                                    <path d="M7 11V7a5 5 0 0 1 9.9-1"/>
-                                </svg>
-                            </span>
-                            <span class="nav-text">Crypto Suite</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item" data-target="learning-journey">
-                        <b></b>
-                        <b></b>
-                        <a href="javascript:void(0)" onclick="switchNav('learning-journey')">
-                            <span class="nav-icon">
-                                <i class="fa-solid fa-graduation-cap"></i>
-                            </span>
-                            <span class="nav-text">Learning Journey</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item" data-target="incident-playbooks">
-                        <b></b>
-                        <b></b>
-                        <a href="javascript:void(0)" onclick="switchNav('incident-playbooks')">
-                            <span class="nav-icon">
-                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <line x1="4" y1="21" x2="4" y2="14"/>
-                                    <line x1="4" y1="10" x2="4" y2="3"/>
-                                    <line x1="12" y1="21" x2="12" y2="12"/>
-                                    <line x1="12" y1="8" x2="12" y2="3"/>
-                                    <line x1="20" y1="21" x2="20" y2="16"/>
-                                    <line x1="20" y1="12" x2="20" y2="3"/>
-                                </svg>
-                            </span>
-                            <span class="nav-text">Playbooks</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-
-            <!-- CONTENT SECTION (LEFT 75% + RIGHT 25%) -->
-            <section class="content" role="main">
-                <!-- LEFT CONTENT -->
-                <div class="left-content">
-                    <!-- VIEW: DASHBOARD OVERVIEW -->
-                    <div class="view-panel active" id="view-dashboard">
-                        <!-- ACTIVITIES BENTO GRID -->
-                        <div class="activities">
-                            <h1>Perimeter Defense Radars</h1>
-                            <div class="dashboard-metrics-grid">
-                                <div class="sg-metric-card" onclick="switchNav('url-scanner')" role="button" aria-label="URL Scanner — Total Scans">
-                                    <div class="metric-icon"><i class="fa-solid fa-globe"></i></div>
-                                    <div class="metric-value" id="statTotalScans">--</div>
-                                    <div class="metric-label">Total Scans</div>
-                                </div>
-                                <div class="sg-metric-card" onclick="switchNav('url-scanner')" role="button" aria-label="Threats Blocked">
-                                    <div class="metric-icon critical"><i class="fa-solid fa-skull-crossbones"></i></div>
-                                    <div class="metric-value" id="statThreatsBlocked">--</div>
-                                    <div class="metric-label">Threats Blocked</div>
-                                </div>
-                                <div class="sg-metric-card" onclick="switchNav('message-analyzer')" role="button" aria-label="Clean Scans">
-                                    <div class="metric-icon safe"><i class="fa-solid fa-circle-check"></i></div>
-                                    <div class="metric-value" id="statCleanScans">--</div>
-                                    <div class="metric-label">Clean Scans</div>
-                                </div>
-                                <div class="sg-metric-card" onclick="switchNav('dashboard')" role="button" aria-label="Defense Score">
-                                    <div class="metric-icon primary"><i class="fa-solid fa-shield-halved"></i></div>
-                                    <div class="metric-value" id="statDefenseScore">--</div>
-                                    <div class="metric-label">Defense Score</div>
-                                </div>
-                                <div class="sg-metric-card" onclick="switchNav('email-radar')" role="button" aria-label="Breach Radar">
-                                    <div class="metric-icon warning"><i class="fa-solid fa-database"></i></div>
-                                    <div class="metric-value">HIBp</div>
-                                    <div class="metric-label">Breach Radar</div>
-                                </div>
-                                <div class="sg-metric-card" onclick="switchNav('header-inspector')" role="button" aria-label="HTTP Headers">
-                                    <div class="metric-icon accent"><i class="fa-solid fa-server"></i></div>
-                                    <div class="metric-value">HTTP</div>
-                                    <div class="metric-label">Header Inspector</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- LEFT BOTTOM: REAL INCIDENT STREAM & BENCHMARKS (IMMEDIATELY VISIBLE) -->
-                        <div class="left-bottom">
-                            <!-- Incident Stream -->
-                            <div class="weekly-schedule">
-                                <h1>Active Incident Stream</h1>
-                                <div class="calendar" id="incidentsCalendar">
-                                    <!-- Populated dynamically from MySQL -->
-                                </div>
-                            </div>
-
-                            <!-- Defense Benchmarks -->
-                            <div class="personal-bests">
-                                <h1>Defense Benchmarks</h1>
-                                <div class="personal-bests-container">
-                                    <div class="best-item box-one">
-                                        <p>Peak Heuristic Speed: 1.2ms</p>
-                                        <i class="fa-solid fa-bolt-lightning benchmark-icon" style="font-size: 26px;"></i>
-                                    </div>
-                                    <div class="best-item box-two">
-                                        <p id="benchmarkEfficacy">Zero-Day Efficacy: 99.8%</p>
-                                        <i class="fa-solid fa-crosshairs benchmark-icon" style="font-size: 24px;"></i>
-                                    </div>
-                                    <div class="best-item box-three">
-                                        <p id="benchmarkVault">Database Scans: Active</p>
-                                        <i class="fa-solid fa-vault benchmark-icon" style="font-size: 24px;"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- REAL SCANS AUDIT LOG TABLE (LIVE FROM MYSQL - COMPACT) -->
-                        <div class="scans-audit-section">
-                            <div class="audit-header">
-                                <div>
-                                    <h2>Live Scan Audit Log</h2>
-                                    <p class="audit-sub">Verified threat telemetry records committed to database</p>
-                                </div>
-                                <button class="btn-refresh-sm" onclick="loadRealDashboardTelemetry()" aria-label="Refresh dashboard data">
-                                    <i class="fa-solid fa-arrows-rotate"></i> Refresh DB
-                                </button>
-                            </div>
-                            <div class="audit-table-wrap">
-                                <table class="table-clean" id="recentScansTable">
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>TYPE</th>
-                                            <th>TARGET</th>
-                                            <th>VERDICT</th>
-                                            <th>THREAT SCORE</th>
-                                            <th>SCANNED BY</th>
-                                            <th>TIMESTAMP</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="recentScansTbody">
-                                        <tr><td colspan="7" style="text-align:center; padding:14px; color:#94a3b8;">Loading verified audit records...</td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
+            <main class="left-content">
+                <!-- ================= OVERVIEW ================= -->
+                <section class="view-panel active" id="view-dashboard">
+                    <div class="page-head">
+                        <div>
+                            <h1>Overview</h1>
+                            <p>Your scanning activity at a glance.</p>
                         </div>
                     </div>
 
-                    <!-- VIEW: URL SCANNER -->
-                    <div class="view-panel" id="view-url-scanner">
-                        <div class="tool-view-card">
-                            <div class="tool-view-header">
-                                <div>
-                                    <h1>Perimeter URL & Malicious Link Radar</h1>
-                                    <p>Heuristic inspection for typosquatting, IDN homoglyphs, brand spoofing, and entropy.</p>
-                                </div>
-                                <button class="btn-back" onclick="switchNav('dashboard')"><i class="fa-solid fa-arrow-left"></i> Dashboard</button>
-                            </div>
-
-                            <div class="scan-bar-container">
-                                <div class="input-with-icon">
-                                    <i class="fa-solid fa-globe input-fa-icon"></i>
-                                    <input type="text" id="targetUrlInput" class="soc-input" placeholder="Enter target URL (e.g., http://secure-login-paypal.verify-account-update.tk/signin)">
-                                </div>
-                                <button class="btn-primary" id="btnRunUrlScan" onclick="executeUrlScan()" aria-label="Execute URL scan">
-                                    <i class="fa-solid fa-satellite-dish"></i>
-                                    <span>EXECUTE SCAN</span>
-                                </button>
-                            </div>
-
-                            <div class="samples-row">
-                                <span class="samples-label">Test Samples:</span>
-                                <button class="sample-chip" onclick="fillUrlSample('http://secure-login-paypal.verify-account-update.tk/signin')" aria-label="Load sample: PayPal phishing on .tk TLD">PayPal (.tk)</button>
-                                <button class="sample-chip" onclick="fillUrlSample('https://pаypal.com/security/login')" aria-label="Load sample: Homoglyph Cyrillic PayPal attack">Homoglyph Attack</button>
-                                <button class="sample-chip" onclick="fillUrlSample('http://192.168.1.105:8080/auth/update.php')" aria-label="Load sample: Direct IP address obfuscation">Direct IP Obfuscation</button>
-                                <button class="sample-chip" onclick="fillUrlSample('https://github.com/security')" aria-label="Load sample: Legitimate GitHub domain">Legitimate Domain</button>
-                            </div>
-
-                            <!-- Real-time Scan Loading Indicator -->
-                            <div class="scan-loading-card" id="urlScanLoader" style="display:none;">
-                                <div class="loader-spinner"></div>
-                                <div class="loader-text">
-                                    <div class="loader-title" id="urlLoaderStage">Initializing Deep Threat Heuristic Analyzer...</div>
-                                    <div class="loader-bar-wrap">
-                                        <div class="loader-bar-fill" id="urlLoaderBar"></div>
-                                    </div>
-                                    <div class="loader-sub" id="urlLoaderSub">Resolving domain hierarchy and WHOIS records</div>
-                                </div>
-                            </div>
-
-                            <div class="results-container" id="urlResultsContainer" style="display: none;">
-                                <div class="result-score-banner" id="urlScoreBanner">
-                                    <div class="score-dial">
-                                        <div class="score-val" id="urlScoreVal">--</div>
-                                        <div class="score-sub">RISK INDEX</div>
-                                    </div>
-                                    <div class="score-details">
-                                        <div class="score-verdict" id="urlVerdict">SCANNING...</div>
-                                        <div class="score-action" id="urlAction">Analyzing target heuristics</div>
-                                        <div class="score-target" id="urlTargetDisplay">--</div>
-                                        <div class="score-db-badge" id="urlDbBadge"><i class="fa-solid fa-database"></i> COMMITTED TO SECURE AUDIT LOG</div>
-                                    </div>
-                                </div>
-
-                                <div class="tool-grid-2">
-                                    <div class="panel-card">
-                                        <div class="panel-header">
-                                            <h3>Threat Indicators & Findings</h3>
-                                            <span class="badge-subtle" id="indicatorCountBadge">0 DETECTED</span>
-                                        </div>
-                                        <div class="panel-body">
-                                            <div class="indicator-list" id="urlIndicatorsList"></div>
-                                        </div>
-                                    </div>
-
-                                    <div class="panel-card">
-                                        <div class="panel-header">
-                                            <h3>Structural & Entropy Telemetry</h3>
-                                        </div>
-                                        <div class="panel-body">
-                                            <div class="telemetry-table" id="urlTelemetryDetails"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                    <div class="stat-grid">
+                        <div class="stat">
+                            <span class="stat-label">Total scans</span>
+                            <span class="stat-value" id="statTotalScans">–</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-label">Threats blocked</span>
+                            <span class="stat-value is-danger" id="statThreatsBlocked">–</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-label">Clean</span>
+                            <span class="stat-value is-safe" id="statCleanScans">–</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-label">Defense score</span>
+                            <span class="stat-value" id="statDefenseScore">–</span>
                         </div>
                     </div>
 
-                    <!-- VIEW: PHISHING NLP -->
-                    <div class="view-panel" id="view-message-analyzer">
-                        <div class="tool-view-card">
-                            <div class="tool-view-header">
-                                <div>
-                                    <h1>Social Engineering & Phishing NLP Analyzer</h1>
-                                    <p>Detect psychological coercion, urgency pressure, credential harvest, and IOCs.</p>
-                                </div>
-                                <button class="btn-back" onclick="switchNav('dashboard')"><i class="fa-solid fa-arrow-left"></i> Dashboard</button>
-                            </div>
+                    <h2 class="section-title">Tools</h2>
+                    <div class="tool-grid">
+                        <button class="tool-tile" onclick="switchNav('url-scanner')">
+                            <i class="fa-solid fa-globe"></i>
+                            <span class="tool-name">URL scanner</span>
+                            <span class="tool-desc">Spot phishing, typosquatting and lookalike domains.</span>
+                        </button>
+                        <button class="tool-tile" onclick="switchNav('message-analyzer')">
+                            <i class="fa-regular fa-envelope"></i>
+                            <span class="tool-name">Phishing check</span>
+                            <span class="tool-desc">Analyze an email or SMS for social engineering.</span>
+                        </button>
+                        <button class="tool-tile" onclick="switchNav('email-radar')">
+                            <i class="fa-solid fa-user-shield"></i>
+                            <span class="tool-name">Breach lookup</span>
+                            <span class="tool-desc">See if an email address appears in known breaches.</span>
+                        </button>
+                        <button class="tool-tile" onclick="switchNav('password-fortress')">
+                            <i class="fa-solid fa-key"></i>
+                            <span class="tool-name">Password strength</span>
+                            <span class="tool-desc">Entropy, crack time and NIST compliance.</span>
+                        </button>
+                        <button class="tool-tile" onclick="switchNav('header-inspector')">
+                            <i class="fa-solid fa-server"></i>
+                            <span class="tool-name">HTTP headers</span>
+                            <span class="tool-desc">Grade a site's security headers.</span>
+                        </button>
+                        <button class="tool-tile" onclick="switchNav('ip-intelligence')">
+                            <i class="fa-solid fa-network-wired"></i>
+                            <span class="tool-name">IP lookup</span>
+                            <span class="tool-desc">Owner, location and risk for an IP address.</span>
+                        </button>
+                    </div>
 
-                            <label class="form-label">SUSPICIOUS MESSAGE / SMS / EMAIL PAYLOAD</label>
-                            <textarea id="messageTextInput" class="soc-textarea" rows="4" placeholder="Paste suspicious SMS, email body, or chat text here..."></textarea>
-                            
-                            <div class="card-bottom-actions">
-                                <div class="samples-row" style="margin: 0;">
-                                    <span class="samples-label">Samples:</span>
-                                    <button class="sample-chip" onclick="fillMessageSample('bank_urgent')" aria-label="Load sample: Urgent bank account lock message">Bank Account Lock</button>
-                                    <button class="sample-chip" onclick="fillMessageSample('delivery')" aria-label="Load sample: USPS unpaid customs fee scam">USPS Unpaid Fee</button>
-                                    <button class="sample-chip" onclick="fillMessageSample('crypto')" aria-label="Load sample: Bitcoin prize lure">Bitcoin Prize Lure</button>
-                                </div>
-                                <button class="btn-primary" id="btnRunMsgScan" onclick="executeMessageScan()" aria-label="Analyze message for phishing vectors">
-                                    <i class="fa-solid fa-brain"></i>
-                                    <span>ANALYZE VECTORS</span>
-                                </button>
-                            </div>
+                    <div class="section-head">
+                        <h2 class="section-title">Recent scans</h2>
+                        <button class="btn-ghost" onclick="loadRealDashboardTelemetry()" aria-label="Refresh recent scans">
+                            <i class="fa-solid fa-arrows-rotate"></i> Refresh
+                        </button>
+                    </div>
+                    <div class="card table-card">
+                        <table class="table-clean" id="recentScansTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Type</th>
+                                    <th>Target</th>
+                                    <th>Verdict</th>
+                                    <th>Score</th>
+                                    <th>User</th>
+                                    <th>Time</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentScansTbody">
+                                <tr><td colspan="7" class="table-empty">Loading…</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
 
-                            <!-- Scan Loading Indicator -->
-                            <div class="scan-loading-card" id="msgScanLoader" style="display:none;">
-                                <div class="loader-spinner"></div>
-                                <div class="loader-text">
-                                    <div class="loader-title" id="msgLoaderStage">Analyzing Psychological Intent Vectors...</div>
-                                    <div class="loader-bar-wrap">
-                                        <div class="loader-bar-fill" id="msgLoaderBar"></div>
-                                    </div>
-                                    <div class="loader-sub" id="msgLoaderSub">Parsing urgency keywords and coercive authority tokens</div>
-                                </div>
-                            </div>
+                    <div class="two-col">
+                        <div>
+                            <h2 class="section-title">Incidents</h2>
+                            <div class="calendar" id="incidentsCalendar" data-empty="No open incidents."></div>
+                        </div>
+                        <div>
+                            <h2 class="section-title">Threat intel</h2>
+                            <div class="card-container" id="threatFeedContainer" data-empty="No threat intel yet."></div>
+                        </div>
+                    </div>
+                </section>
 
-                            <div class="results-container" id="messageResultsContainer" style="display: none;">
-                                <div class="result-score-banner" id="msgScoreBanner">
-                                    <div class="score-dial">
-                                        <div class="score-val" id="msgScoreVal">--</div>
-                                        <div class="score-sub">THREAT SCORE</div>
-                                    </div>
-                                    <div class="score-details">
-                                        <div class="score-verdict" id="msgVerdict">ANALYZING</div>
-                                        <div class="score-action" id="msgAction">--</div>
-                                        <div class="score-db-badge" id="msgDbBadge"><i class="fa-solid fa-database"></i> COMMITTED TO SECURE AUDIT LOG</div>
-                                    </div>
-                                </div>
-
-                                <div class="tool-grid-2">
-                                    <div class="panel-card">
-                                        <div class="panel-header">
-                                            <h3>Identified Psychological Attack Vectors</h3>
-                                        </div>
-                                        <div class="panel-body" id="msgVectorsList"></div>
-                                    </div>
-
-                                    <div class="panel-card">
-                                        <div class="panel-header">
-                                            <h3>Extracted Indicators of Compromise (IOCs)</h3>
-                                        </div>
-                                        <div class="panel-body" id="msgIocsList"></div>
-                                    </div>
-                                </div>
-                            </div>
+                <!-- ================= URL SCANNER ================= -->
+                <section class="view-panel" id="view-url-scanner">
+                    <div class="page-head">
+                        <div>
+                            <h1>URL scanner</h1>
+                            <p>Checks a link for typosquatting, lookalike characters, brand spoofing and randomness.</p>
                         </div>
                     </div>
 
-                    <!-- VIEW: BREACH RADAR -->
-                    <div class="view-panel" id="view-email-radar">
-                        <div class="tool-view-card">
-                            <div class="tool-view-header">
-                                <div>
-                                    <h1>Identity Breach & Exposure Radar</h1>
-                                    <p>Audit email identities against enterprise breach databases and detect disposable domains.</p>
-                                </div>
-                                <button class="btn-back" onclick="switchNav('dashboard')"><i class="fa-solid fa-arrow-left"></i> Dashboard</button>
-                            </div>
+                    <div class="scan-bar-container">
+                        <div class="input-with-icon">
+                            <i class="fa-solid fa-globe input-fa-icon"></i>
+                            <input type="text" id="targetUrlInput" class="soc-input" placeholder="https://example.com/login" onkeydown="if(event.key==='Enter')executeUrlScan()">
+                        </div>
+                        <button class="btn-primary" id="btnRunUrlScan" onclick="executeUrlScan()">
+                            <span>Scan</span>
+                        </button>
+                    </div>
 
-                            <div class="scan-bar-container">
-                                <div class="input-with-icon">
-                                    <i class="fa-solid fa-envelope input-fa-icon"></i>
-                                    <input type="email" id="emailAuditInput" class="soc-input" placeholder="Enter email address (e.g. user@targetdomain.com)">
-                                </div>
-                                <button class="btn-primary" id="btnRunEmailScan" onclick="executeEmailAudit()" aria-label="Audit email identity for breaches">
-                                    <i class="fa-solid fa-shield-halved"></i>
-                                    <span>AUDIT IDENTITY</span>
-                                </button>
-                            </div>
+                    <div class="samples-row">
+                        <span class="samples-label">Try:</span>
+                        <button class="sample-chip" onclick="fillUrlSample('http://secure-login-paypal.verify-account-update.tk/signin')">PayPal on .tk</button>
+                        <button class="sample-chip" onclick="fillUrlSample('https://pаypal.com/security/login')">Homoglyph</button>
+                        <button class="sample-chip" onclick="fillUrlSample('http://192.168.1.105:8080/auth/update.php')">Raw IP</button>
+                        <button class="sample-chip" onclick="fillUrlSample('https://github.com/security')">Legitimate</button>
+                    </div>
 
-                            <!-- Scan Loading Indicator -->
-                            <div class="scan-loading-card" id="emailScanLoader" style="display:none;">
-                                <div class="loader-spinner"></div>
-                                <div class="loader-text">
-                                    <div class="loader-title" id="emailLoaderStage">Correlating Identity with Breach Archives...</div>
-                                    <div class="loader-bar-wrap">
-                                        <div class="loader-bar-fill" id="emailLoaderBar"></div>
-                                    </div>
-                                    <div class="loader-sub">Checking RFC 5322 compliance and disposable email domain registries</div>
-                                </div>
-                            </div>
-
-                            <div class="results-container" id="emailResultsContainer" style="display: none;">
-                                <div class="result-score-banner" id="emailScoreBanner">
-                                    <div class="score-dial">
-                                        <div class="score-val" id="emailScoreVal">--</div>
-                                        <div class="score-sub">EXPOSURE RISK</div>
-                                    </div>
-                                    <div class="score-details">
-                                        <div class="score-verdict" id="emailVerdict">--</div>
-                                        <div class="score-action" id="emailAction">--</div>
-                                        <div class="score-db-badge"><i class="fa-solid fa-database"></i> COMMITTED TO SECURE AUDIT LOG</div>
-                                    </div>
-                                </div>
-
-                                <div class="tool-grid-2">
-                                    <div class="panel-card">
-                                        <div class="panel-header">
-                                            <h3>Breach Incidents Correlated</h3>
-                                        </div>
-                                        <div class="panel-body" id="breachListContainer"></div>
-                                    </div>
-
-                                    <div class="panel-card">
-                                        <div class="panel-header">
-                                            <h3>Remediation Protocols</h3>
-                                        </div>
-                                        <div class="panel-body" id="breachRemediationContainer"></div>
-                                    </div>
-                                </div>
-                            </div>
+                    <div class="scan-loading-card" id="urlScanLoader" style="display:none;">
+                        <div class="loader-spinner"></div>
+                        <div class="loader-text">
+                            <div class="loader-title" id="urlLoaderStage">Analyzing…</div>
+                            <div class="loader-bar-wrap"><div class="loader-bar-fill" id="urlLoaderBar"></div></div>
+                            <div class="loader-sub" id="urlLoaderSub"></div>
                         </div>
                     </div>
 
-                    <!-- VIEW: PASSWORD FORTRESS -->
-                    <div class="view-panel" id="view-password-fortress">
-                        <div class="tool-view-card">
-                            <div class="tool-view-header">
-                                <div>
-                                    <h1>Password Fortress & Entropy Calculator</h1>
-                                    <p>Mathematical Shannon entropy, NIST SP 800-63B standards, and GPU cluster brute force estimates.</p>
-                                </div>
-                                <button class="btn-back" onclick="switchNav('dashboard')"><i class="fa-solid fa-arrow-left"></i> Dashboard</button>
+                    <div class="results-container" id="urlResultsContainer" style="display: none;">
+                        <div class="result-score-banner" id="urlScoreBanner">
+                            <div class="score-dial">
+                                <div class="score-val" id="urlScoreVal">–</div>
+                                <div class="score-sub">Risk</div>
                             </div>
-
-                            <label class="form-label">ENTER CREDENTIAL FOR AUDIT (PROCESSED IN-MEMORY / ZERO LOGGING)</label>
-                            <div class="input-with-icon">
-                                <i class="fa-solid fa-lock input-fa-icon"></i>
-                                <input type="text" id="passwordAuditInput" class="soc-input" placeholder="Type password to evaluate..." oninput="executePasswordAudit()">
+                            <div class="score-details">
+                                <div class="score-verdict" id="urlVerdict"></div>
+                                <div class="score-action" id="urlAction"></div>
+                                <div class="score-target" id="urlTargetDisplay"></div>
+                                <div class="score-db-badge" id="urlDbBadge"></div>
                             </div>
+                        </div>
 
-                            <div class="results-container" id="pwdResultsContainer" style="display: none;">
-                                <div class="result-score-banner" id="pwdScoreBanner">
-                                    <div class="score-dial">
-                                        <div class="score-val" id="pwdScoreVal">--</div>
-                                        <div class="score-sub">ENTROPY RATING</div>
-                                    </div>
-                                    <div class="score-details">
-                                        <div class="score-verdict" id="pwdVerdict">--</div>
-                                        <div class="score-action" id="pwdEntropyBits">--</div>
-                                        <div class="score-db-badge"><i class="fa-solid fa-database"></i> ANONYMIZED AUDIT LOGGED</div>
-                                    </div>
+                        <div class="tool-grid-2">
+                            <div class="panel-card">
+                                <div class="panel-header">
+                                    <h3>Findings</h3>
+                                    <span class="badge-subtle" id="indicatorCountBadge">0</span>
                                 </div>
-
-                                <div class="tool-grid-2">
-                                    <div class="panel-card">
-                                        <div class="panel-header">
-                                            <h3>Brute-Force Resistance Modeling</h3>
-                                        </div>
-                                        <div class="panel-body" id="pwdCrackTimes"></div>
-                                    </div>
-
-                                    <div class="panel-card">
-                                        <div class="panel-header">
-                                            <h3>NIST SP 800-63B Compliance Verification</h3>
-                                        </div>
-                                        <div class="panel-body" id="pwdNistChecks"></div>
-                                    </div>
-                                </div>
+                                <div class="panel-body"><div class="indicator-list" id="urlIndicatorsList"></div></div>
+                            </div>
+                            <div class="panel-card">
+                                <div class="panel-header"><h3>Details</h3></div>
+                                <div class="panel-body"><div class="telemetry-table" id="urlTelemetryDetails"></div></div>
                             </div>
                         </div>
                     </div>
+                </section>
 
-                    <!-- VIEW: HTTP HEADERS -->
-                    <div class="view-panel" id="view-header-inspector">
-                        <div class="tool-view-card">
-                            <div class="tool-view-header">
-                                <div>
-                                    <h1>HTTP Security Headers Inspector</h1>
-                                    <p>Audit production web hosts for HSTS, CSP, X-Frame-Options, and version disclosure.</p>
-                                </div>
-                                <button class="btn-back" onclick="switchNav('dashboard')"><i class="fa-solid fa-arrow-left"></i> Dashboard</button>
-                            </div>
-
-                            <div class="scan-bar-container">
-                                <div class="input-with-icon">
-                                    <i class="fa-solid fa-server input-fa-icon"></i>
-                                    <input type="text" id="headerUrlInput" class="soc-input" placeholder="Enter target domain or URL (e.g. https://example.com)">
-                                </div>
-                                <button class="btn-primary" id="btnRunHeaderScan" onclick="executeHeaderAudit()" aria-label="Inspect HTTP security headers">
-                                    <i class="fa-solid fa-magnifying-glass"></i>
-                                    <span>INSPECT HEADERS</span>
-                                </button>
-                            </div>
-
-                            <div class="results-container" id="headerResultsContainer" style="display: none;">
-                                <div class="result-score-banner" id="headerScoreBanner">
-                                    <div class="score-dial">
-                                        <div class="score-val" id="headerGradeVal">--</div>
-                                        <div class="score-sub">SECURITY GRADE</div>
-                                    </div>
-                                    <div class="score-details">
-                                        <div class="score-verdict" id="headerScoreNumber">--</div>
-                                        <div class="score-action" id="headerTargetHost">--</div>
-                                        <div class="score-db-badge"><i class="fa-solid fa-database"></i> AUDIT RECORD COMMITTED</div>
-                                    </div>
-                                </div>
-
-                                <div class="panel-card">
-                                    <div class="panel-header">
-                                        <h3>Security Header Configuration Audit</h3>
-                                    </div>
-                                    <div class="panel-body">
-                                        <div class="cve-table-wrap">
-                                            <table class="table-soc" id="headersTable">
-                                                <thead>
-                                                    <tr>
-                                                        <th>HEADER</th>
-                                                        <th>IMPORTANCE</th>
-                                                        <th>STATUS</th>
-                                                        <th>CONFIGURATION DETAILS</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="headersTableBody"></tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                <!-- ================= PHISHING CHECK ================= -->
+                <section class="view-panel" id="view-message-analyzer">
+                    <div class="page-head">
+                        <div>
+                            <h1>Phishing check</h1>
+                            <p>Paste a suspicious email, SMS or chat message to detect pressure tactics, credential grabs and links.</p>
                         </div>
                     </div>
 
-                    <!-- VIEW: IP INTEL -->
-                    <div class="view-panel" id="view-ip-intelligence">
-                        <div class="tool-view-card">
-                            <div class="tool-view-header">
-                                <div>
-                                    <h1>IP Intelligence & Autonomous System Radar</h1>
-                                    <p>Classify IPv4/IPv6 address blocks, detect bogon ranges, and analyze ASN risk.</p>
-                                </div>
-                                <button class="btn-back" onclick="switchNav('dashboard')"><i class="fa-solid fa-arrow-left"></i> Dashboard</button>
-                            </div>
+                    <label class="form-label" for="messageTextInput">Message</label>
+                    <textarea id="messageTextInput" class="soc-textarea" rows="5" placeholder="Paste the message text here…"></textarea>
 
-                            <div class="scan-bar-container">
-                                <div class="input-with-icon">
-                                    <i class="fa-solid fa-network-wired input-fa-icon"></i>
-                                    <input type="text" id="ipAuditInput" class="soc-input" placeholder="Enter IP address (e.g. 198.51.100.24)">
-                                </div>
-                                <button class="btn-primary" id="btnRunIpAudit" onclick="executeIpAudit()" aria-label="Analyze IP address intelligence">
-                                    <i class="fa-solid fa-satellite-dish"></i>
-                                    <span>ANALYZE IP</span>
-                                </button>
-                            </div>
+                    <div class="card-bottom-actions">
+                        <div class="samples-row">
+                            <span class="samples-label">Try:</span>
+                            <button class="sample-chip" onclick="fillMessageSample('bank_urgent')">Bank lockout</button>
+                            <button class="sample-chip" onclick="fillMessageSample('delivery')">Parcel fee</button>
+                            <button class="sample-chip" onclick="fillMessageSample('crypto')">Crypto prize</button>
+                        </div>
+                        <button class="btn-primary" id="btnRunMsgScan" onclick="executeMessageScan()">
+                            <span>Analyze</span>
+                        </button>
+                    </div>
 
-                            <div class="results-container" id="ipResultsContainer" style="display: none;">
-                                <div class="result-score-banner" id="ipScoreBanner">
-                                    <div class="score-dial">
-                                        <div class="score-val" id="ipScoreVal">--</div>
-                                        <div class="score-sub">THREAT INDEX</div>
-                                    </div>
-                                    <div class="score-details">
-                                        <div class="score-verdict" id="ipVerdict">--</div>
-                                        <div class="score-action" id="ipCategory">--</div>
-                                        <div class="score-db-badge"><i class="fa-solid fa-database"></i> IP TELEMETRY COMMITTED</div>
-                                    </div>
-                                </div>
-
-                                <div class="panel-card">
-                                    <div class="panel-header">
-                                        <h3>Routing & Autonomous System Metadata</h3>
-                                    </div>
-                                    <div class="panel-body" id="ipNetworkDetails"></div>
-                                </div>
-                            </div>
+                    <div class="scan-loading-card" id="msgScanLoader" style="display:none;">
+                        <div class="loader-spinner"></div>
+                        <div class="loader-text">
+                            <div class="loader-title" id="msgLoaderStage">Analyzing…</div>
+                            <div class="loader-bar-wrap"><div class="loader-bar-fill" id="msgLoaderBar"></div></div>
+                            <div class="loader-sub" id="msgLoaderSub"></div>
                         </div>
                     </div>
 
-                    <!-- VIEW: CRYPTO SUITE -->
-                    <div class="view-panel" id="view-crypto-suite">
-                        <div class="tool-view-card">
-                            <div class="tool-view-header">
-                                <div>
-                                    <h1>Cryptographic Primitives & Hash Analysis</h1>
-                                    <p>Generate secure digests, identify unknown hash signatures, and encode/decode payloads.</p>
-                                </div>
-                                <button class="btn-back" onclick="switchNav('dashboard')"><i class="fa-solid fa-arrow-left"></i> Dashboard</button>
+                    <div class="results-container" id="messageResultsContainer" style="display: none;">
+                        <div class="result-score-banner" id="msgScoreBanner">
+                            <div class="score-dial">
+                                <div class="score-val" id="msgScoreVal">–</div>
+                                <div class="score-sub">Threat</div>
                             </div>
+                            <div class="score-details">
+                                <div class="score-verdict" id="msgVerdict"></div>
+                                <div class="score-action" id="msgAction"></div>
+                                <div class="score-db-badge" id="msgDbBadge"></div>
+                            </div>
+                        </div>
 
-                            <div class="tool-grid-2">
-                                <div class="panel-card">
-                                    <div class="panel-header">
-                                        <h3>Cryptographic Hash Generator</h3>
-                                    </div>
-                                    <div class="panel-body">
-                                        <label class="form-label">PLAINTEXT PAYLOAD</label>
-                                        <textarea id="cryptoInputText" class="soc-textarea" rows="3" placeholder="Enter text to hash..."></textarea>
-                                        <button class="btn-primary" style="margin-top: 10px; width: 100%;" onclick="executeCryptoHashes()">
-                                            <i class="fa-solid fa-hashtag"></i>
-                                            <span>COMPUTE DIGESTS</span>
-                                        </button>
-                                        <div id="cryptoHashesOutput" style="margin-top: 14px;"></div>
-                                    </div>
-                                </div>
-
-                                <div class="panel-card">
-                                    <div class="panel-header">
-                                        <h3>Hash Signature Identifier & Transforms</h3>
-                                    </div>
-                                    <div class="panel-body">
-                                        <label class="form-label">UNKNOWN HASH SIGNATURE</label>
-                                        <input type="text" id="unknownHashInput" class="soc-input" placeholder="Paste hash (MD5, SHA-1, SHA-256...)">
-                                        <button class="btn-outline" style="margin-top: 10px; width: 100%;" onclick="executeHashIdentify()">
-                                            <i class="fa-solid fa-fingerprint"></i>
-                                            <span>IDENTIFY ALGORITHM</span>
-                                        </button>
-                                        <div id="hashIdentifyOutput" style="margin-top: 14px;"></div>
-
-                                        <div class="divider-line"></div>
-
-                                        <label class="form-label">ENCODING TRANSFORMS</label>
-                                        <div class="btn-group-soc">
-                                            <button class="btn-chip" onclick="executeTransform('b64_encode')">B64 Enc</button>
-                                            <button class="btn-chip" onclick="executeTransform('b64_decode')">B64 Dec</button>
-                                            <button class="btn-chip" onclick="executeTransform('hex_encode')">Hex Enc</button>
-                                            <button class="btn-chip" onclick="executeTransform('hex_decode')">Hex Dec</button>
-                                            <button class="btn-chip" onclick="executeTransform('url_encode')">URL Enc</button>
-                                            <button class="btn-chip" onclick="executeTransform('url_decode')">URL Dec</button>
-                                        </div>
-                                        <div id="transformOutput" style="margin-top: 12px;"></div>
-                                    </div>
-                                </div>
+                        <div class="tool-grid-2">
+                            <div class="panel-card">
+                                <div class="panel-header"><h3>Tactics detected</h3></div>
+                                <div class="panel-body" id="msgVectorsList"></div>
+                            </div>
+                            <div class="panel-card">
+                                <div class="panel-header"><h3>Extracted indicators</h3></div>
+                                <div class="panel-body" id="msgIocsList"></div>
                             </div>
                         </div>
                     </div>
+                </section>
 
-                    <!-- VIEW: LEARNING JOURNEY -->
-                    <div class="view-panel" id="view-learning-journey">
-                        <div class="tool-view-card learning-journey-view">
-                            <!-- Hero Banner -->
-                            <div class="learning-hero">
-                                <div class="learning-hero-content">
-                                    <div class="learning-badge"><i class="fa-solid fa-graduation-cap"></i> SafeGuard SOC Academy</div>
-                                    <h1>Cybersecurity Learning Journey</h1>
-                                    <p>Structured video masterclasses, interactive SOC diagnostic quizzes, and ready-to-deploy incident cheatsheets.</p>
-                                    
-                                    <div class="learning-stats-ribbon">
-                                        <div class="stat-pill"><i class="fa-solid fa-film"></i> <span>4 Video Masterclasses</span></div>
-                                        <div class="stat-pill"><i class="fa-solid fa-list-check"></i> <span>Interactive SOC Quizzes</span></div>
-                                        <div class="stat-pill"><i class="fa-solid fa-file-shield"></i> <span>Field Cheatsheets</span></div>
-                                        <div class="stat-pill"><i class="fa-solid fa-shield-halved"></i> <span>SOC Verified</span></div>
-                                    </div>
-                                </div>
-                                <button class="btn-back" onclick="switchNav('dashboard')"><i class="fa-solid fa-arrow-left"></i> Dashboard</button>
-                            </div>
-
-                            <!-- Learning Sub-Navigation Tabs -->
-                            <div class="learning-subnav">
-                                <button class="learning-subnav-btn active" id="subnav-courses" onclick="switchLearningSubTab('courses')">
-                                    <i class="fa-solid fa-video"></i>
-                                    <span>Video Courses</span>
-                                </button>
-                                <button class="learning-subnav-btn" id="subnav-quizzes" onclick="switchLearningSubTab('quizzes')">
-                                    <i class="fa-solid fa-circle-question"></i>
-                                    <span>Practice Quizzes</span>
-                                </button>
-                                <button class="learning-subnav-btn" id="subnav-materials" onclick="switchLearningSubTab('materials')">
-                                    <i class="fa-solid fa-book-bookmark"></i>
-                                    <span>Course Cheatsheets</span>
-                                </button>
-                            </div>
-
-                            <!-- TAB 1: VIDEO MASTERCLASSES -->
-                            <div class="learning-tab-content active" id="learningTab-courses">
-                                <div class="section-title-row">
-                                    <div>
-                                        <h2>Defensive Security Video Masterclasses</h2>
-                                        <p class="section-subtext">Deep-dive video lessons featuring live breakdowns, heuristic analysis, and defense mitigations.</p>
-                                    </div>
-                                    <div class="course-filter-badge">
-                                        <i class="fa-solid fa-circle-play"></i> 4 Verified Masterclasses
-                                    </div>
-                                </div>
-                                <div class="courses-grid" id="learningCoursesContainer">
-                                    <div class="loading-placeholder"><i class="fa-solid fa-spinner fa-spin"></i> Loading video courses...</div>
-                                </div>
-                            </div>
-
-                            <!-- TAB 2: INTERACTIVE QUIZZES -->
-                            <div class="learning-tab-content" id="learningTab-quizzes">
-                                <div class="section-title-row">
-                                    <div>
-                                        <h2>Defensive Readiness & SOC Quizzes</h2>
-                                        <p class="section-subtext">Evaluate your detection instincts. Each drill provides instant feedback with real-world technical explanations.</p>
-                                    </div>
-                                </div>
-
-                                <!-- Quizzes List View -->
-                                <div id="quizzesListView">
-                                    <div class="quizzes-grid" id="learningQuizzesContainer">
-                                        <div class="loading-placeholder"><i class="fa-solid fa-spinner fa-spin"></i> Loading quizzes...</div>
-                                    </div>
-                                </div>
-
-                                <!-- Active Quiz Runner Engine -->
-                                <div id="quizRunnerCard" style="display:none;" class="quiz-runner-box">
-                                    <!-- Populated dynamically when user clicks "Start Quiz Drill" -->
-                                </div>
-                            </div>
-
-                            <!-- TAB 3: COURSE MATERIALS & CHEATSHEETS -->
-                            <div class="learning-tab-content" id="learningTab-materials">
-                                <div class="section-title-row">
-                                    <div>
-                                        <h2>Defensive Playbooks & Tactical Cheatsheets</h2>
-                                        <p class="section-subtext">MITRE ATT&CK reference frameworks, email header forensics, and Linux IR one-liners.</p>
-                                    </div>
-                                </div>
-                                <div class="materials-grid" id="learningMaterialsContainer">
-                                    <div class="loading-placeholder"><i class="fa-solid fa-spinner fa-spin"></i> Loading materials...</div>
-                                </div>
-                            </div>
+                <!-- ================= BREACH LOOKUP ================= -->
+                <section class="view-panel" id="view-email-radar">
+                    <div class="page-head">
+                        <div>
+                            <h1>Breach lookup</h1>
+                            <p>Check whether an email address appears in known data breaches, and flag disposable domains.</p>
                         </div>
                     </div>
 
-                    <!-- VIEW: PLAYBOOKS -->
-                    <div class="view-panel" id="view-incident-playbooks">
-                        <div class="tool-view-card">
-                            <div class="tool-view-header">
-                                <div>
-                                    <h1>Enterprise Incident Response Playbooks</h1>
-                                    <p>Standard operating procedures for containment, isolation, and forensics preservation.</p>
+                    <div class="scan-bar-container">
+                        <div class="input-with-icon">
+                            <i class="fa-regular fa-envelope input-fa-icon"></i>
+                            <input type="email" id="emailAuditInput" class="soc-input" placeholder="name@example.com" onkeydown="if(event.key==='Enter')executeEmailAudit()">
+                        </div>
+                        <button class="btn-primary" id="btnRunEmailScan" onclick="executeEmailAudit()">
+                            <span>Check</span>
+                        </button>
+                    </div>
+
+                    <div class="scan-loading-card" id="emailScanLoader" style="display:none;">
+                        <div class="loader-spinner"></div>
+                        <div class="loader-text">
+                            <div class="loader-title" id="emailLoaderStage">Checking breach archives…</div>
+                            <div class="loader-bar-wrap"><div class="loader-bar-fill" id="emailLoaderBar"></div></div>
+                        </div>
+                    </div>
+
+                    <div class="results-container" id="emailResultsContainer" style="display: none;">
+                        <div class="result-score-banner" id="emailScoreBanner">
+                            <div class="score-dial">
+                                <div class="score-val" id="emailScoreVal">–</div>
+                                <div class="score-sub">Exposure</div>
+                            </div>
+                            <div class="score-details">
+                                <div class="score-verdict" id="emailVerdict"></div>
+                                <div class="score-action" id="emailAction"></div>
+                            </div>
+                        </div>
+
+                        <div class="tool-grid-2">
+                            <div class="panel-card">
+                                <div class="panel-header"><h3>Breaches</h3></div>
+                                <div class="panel-body" id="breachListContainer"></div>
+                            </div>
+                            <div class="panel-card">
+                                <div class="panel-header"><h3>What to do</h3></div>
+                                <div class="panel-body" id="breachRemediationContainer"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ================= PASSWORD STRENGTH ================= -->
+                <section class="view-panel" id="view-password-fortress">
+                    <div class="page-head">
+                        <div>
+                            <h1>Password strength</h1>
+                            <p>Entropy, estimated crack times and NIST SP 800-63B checks. Passwords are evaluated in memory and never stored.</p>
+                        </div>
+                    </div>
+
+                    <label class="form-label" for="passwordAuditInput">Password</label>
+                    <div class="input-with-icon">
+                        <i class="fa-solid fa-lock input-fa-icon"></i>
+                        <input type="text" id="passwordAuditInput" class="soc-input" placeholder="Start typing…" autocomplete="off" spellcheck="false" oninput="executePasswordAudit()">
+                    </div>
+
+                    <div class="results-container" id="pwdResultsContainer" style="display: none;">
+                        <div class="result-score-banner" id="pwdScoreBanner">
+                            <div class="score-dial">
+                                <div class="score-val" id="pwdScoreVal">–</div>
+                                <div class="score-sub">Strength</div>
+                            </div>
+                            <div class="score-details">
+                                <div class="score-verdict" id="pwdVerdict"></div>
+                                <div class="score-action" id="pwdEntropyBits"></div>
+                            </div>
+                        </div>
+
+                        <div class="tool-grid-2">
+                            <div class="panel-card">
+                                <div class="panel-header"><h3>Time to crack</h3></div>
+                                <div class="panel-body" id="pwdCrackTimes"></div>
+                            </div>
+                            <div class="panel-card">
+                                <div class="panel-header"><h3>NIST checks</h3></div>
+                                <div class="panel-body" id="pwdNistChecks"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ================= HTTP HEADERS ================= -->
+                <section class="view-panel" id="view-header-inspector">
+                    <div class="page-head">
+                        <div>
+                            <h1>HTTP headers</h1>
+                            <p>Grade a site's HSTS, CSP, X-Frame-Options and other security headers.</p>
+                        </div>
+                    </div>
+
+                    <div class="scan-bar-container">
+                        <div class="input-with-icon">
+                            <i class="fa-solid fa-server input-fa-icon"></i>
+                            <input type="text" id="headerUrlInput" class="soc-input" placeholder="example.com" onkeydown="if(event.key==='Enter')executeHeaderAudit()">
+                        </div>
+                        <button class="btn-primary" id="btnRunHeaderScan" onclick="executeHeaderAudit()">
+                            <span>Inspect</span>
+                        </button>
+                    </div>
+
+                    <div class="results-container" id="headerResultsContainer" style="display: none;">
+                        <div class="result-score-banner" id="headerScoreBanner">
+                            <div class="score-dial">
+                                <div class="score-val" id="headerGradeVal">–</div>
+                                <div class="score-sub">Grade</div>
+                            </div>
+                            <div class="score-details">
+                                <div class="score-verdict" id="headerScoreNumber"></div>
+                                <div class="score-action" id="headerTargetHost"></div>
+                            </div>
+                        </div>
+
+                        <div class="card table-card">
+                            <table class="table-soc" id="headersTable">
+                                <thead>
+                                    <tr>
+                                        <th>Header</th>
+                                        <th>Importance</th>
+                                        <th>Status</th>
+                                        <th>Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="headersTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ================= IP LOOKUP ================= -->
+                <section class="view-panel" id="view-ip-intelligence">
+                    <div class="page-head">
+                        <div>
+                            <h1>IP lookup</h1>
+                            <p>Classify an IPv4 or IPv6 address, detect private and bogon ranges, and see its network owner.</p>
+                        </div>
+                    </div>
+
+                    <div class="scan-bar-container">
+                        <div class="input-with-icon">
+                            <i class="fa-solid fa-network-wired input-fa-icon"></i>
+                            <input type="text" id="ipAuditInput" class="soc-input" placeholder="198.51.100.24" onkeydown="if(event.key==='Enter')executeIpAudit()">
+                        </div>
+                        <button class="btn-primary" id="btnRunIpAudit" onclick="executeIpAudit()">
+                            <span>Look up</span>
+                        </button>
+                    </div>
+
+                    <div class="results-container" id="ipResultsContainer" style="display: none;">
+                        <div class="result-score-banner" id="ipScoreBanner">
+                            <div class="score-dial">
+                                <div class="score-val" id="ipScoreVal">–</div>
+                                <div class="score-sub">Threat</div>
+                            </div>
+                            <div class="score-details">
+                                <div class="score-verdict" id="ipVerdict"></div>
+                                <div class="score-action" id="ipCategory"></div>
+                            </div>
+                        </div>
+
+                        <div class="panel-card">
+                            <div class="panel-header"><h3>Network</h3></div>
+                            <div class="panel-body" id="ipNetworkDetails"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ================= HASH & ENCODE ================= -->
+                <section class="view-panel" id="view-crypto-suite">
+                    <div class="page-head">
+                        <div>
+                            <h1>Hash &amp; encode</h1>
+                            <p>Generate digests, identify an unknown hash, and encode or decode text.</p>
+                        </div>
+                    </div>
+
+                    <div class="tool-grid-2">
+                        <div class="panel-card">
+                            <div class="panel-header"><h3>Generate hashes</h3></div>
+                            <div class="panel-body">
+                                <label class="form-label" for="cryptoInputText">Text</label>
+                                <textarea id="cryptoInputText" class="soc-textarea" rows="3" placeholder="Text to hash or transform…"></textarea>
+                                <button class="btn-primary btn-block" onclick="executeCryptoHashes()"><span>Compute hashes</span></button>
+                                <div id="cryptoHashesOutput" class="output-slot"></div>
+
+                                <div class="divider-line"></div>
+
+                                <label class="form-label">Transform the text above</label>
+                                <div class="btn-group-soc">
+                                    <button class="btn-chip" onclick="executeTransform('b64_encode')">Base64 encode</button>
+                                    <button class="btn-chip" onclick="executeTransform('b64_decode')">Base64 decode</button>
+                                    <button class="btn-chip" onclick="executeTransform('hex_encode')">Hex encode</button>
+                                    <button class="btn-chip" onclick="executeTransform('hex_decode')">Hex decode</button>
+                                    <button class="btn-chip" onclick="executeTransform('url_encode')">URL encode</button>
+                                    <button class="btn-chip" onclick="executeTransform('url_decode')">URL decode</button>
                                 </div>
-                                <button class="btn-back" onclick="switchNav('dashboard')"><i class="fa-solid fa-arrow-left"></i> Dashboard</button>
+                                <div id="transformOutput" class="output-slot"></div>
                             </div>
-                            <div class="playbooks-container" id="playbooksContainer"></div>
                         </div>
-                    </div>
-                </div>
 
-                <!-- RIGHT CONTENT (REAL USER INFO OR SIGN IN CARD) -->
-                <div class="right-content">
-                    <!-- Dynamic User Profile from MySQL -->
-                    <div class="user-info-section" id="sidebarUserProfile">
-                        <!-- Populated dynamically via JS: Real user or guest login card -->
-                    </div>
-
-                    <!-- Active Defense Score (Real Database Calculation) -->
-                    <div class="active-calories">
-                        <h1 style="align-self: flex-start">Defense Score</h1>
-                        <div class="active-calories-container">
-                            <div class="box" id="postureCircleBox" style="--i: 94%">
-                                <div class="circle">
-                                    <h2 id="postureScoreNumber">94<small>%</small></h2>
-                                </div>
-                            </div>
-                            <div class="calories-content">
-                                <p><span>Total Scans:</span> <span id="sidebarStatTotalScans">0</span></p>
-                                <p><span>Threats Blocked:</span> <span id="sidebarStatThreatsBlocked" style="color:#ef4444;">0</span></p>
-                                <p><span>Clean Assets:</span> <span id="sidebarStatCleanScans" style="color:#10b981;">0</span></p>
+                        <div class="panel-card">
+                            <div class="panel-header"><h3>Identify a hash</h3></div>
+                            <div class="panel-body">
+                                <label class="form-label" for="unknownHashInput">Hash</label>
+                                <input type="text" id="unknownHashInput" class="soc-input" placeholder="MD5, SHA-1, SHA-256…" onkeydown="if(event.key==='Enter')executeHashIdentify()">
+                                <button class="btn-outline btn-block" onclick="executeHashIdentify()"><span>Identify</span></button>
+                                <div id="hashIdentifyOutput" class="output-slot"></div>
                             </div>
                         </div>
                     </div>
+                </section>
 
-                    <!-- Mobile Personal Bests -->
-                    <div class="mobile-personal-bests">
-                        <h1>Defense Benchmarks</h1>
-                        <div class="personal-bests-container">
-                            <div class="best-item box-one">
-                                <p>Peak Speed: 1.2ms</p>
-                                <i class="fa-solid fa-bolt-lightning" style="font-size: 24px; color: #590b94;"></i>
-                            </div>
-                            <div class="best-item box-two">
-                                <p>Zero-Day Efficacy: 99.8%</p>
-                                <i class="fa-solid fa-crosshairs benchmark-icon" style="font-size: 20px;"></i>
-                            </div>
-                            <div class="best-item box-three">
-                                <p>Persistence Engine: Active</p>
-                                <i class="fa-solid fa-vault benchmark-icon" style="font-size: 20px;"></i>
-                            </div>
+                <!-- ================= ACADEMY ================= -->
+                <section class="view-panel" id="view-learning-journey">
+                    <div class="page-head">
+                        <div>
+                            <h1>Academy</h1>
+                            <p>Video lessons, practice quizzes and quick-reference cheatsheets.</p>
                         </div>
                     </div>
 
-                    <!-- Live Threat Feed from MySQL -->
-                    <div class="friends-activity">
-                        <h1>Threat Intel Feed</h1>
-                        <div class="card-container" id="threatFeedContainer">
-                            <!-- Populated dynamically from MySQL threat_intel_feed -->
+                    <div class="learning-subnav" role="tablist">
+                        <button class="learning-subnav-btn active" id="subnav-courses" onclick="switchLearningSubTab('courses')">Courses</button>
+                        <button class="learning-subnav-btn" id="subnav-quizzes" onclick="switchLearningSubTab('quizzes')">Quizzes</button>
+                        <button class="learning-subnav-btn" id="subnav-materials" onclick="switchLearningSubTab('materials')">Cheatsheets</button>
+                    </div>
+
+                    <div class="learning-tab-content active" id="learningTab-courses">
+                        <div class="courses-grid" id="learningCoursesContainer">
+                            <div class="loading-placeholder">Loading courses…</div>
                         </div>
                     </div>
-                </div>
-            </section>
-        </main>
+
+                    <div class="learning-tab-content" id="learningTab-quizzes">
+                        <div id="quizzesListView">
+                            <div class="quizzes-grid" id="learningQuizzesContainer">
+                                <div class="loading-placeholder">Loading quizzes…</div>
+                            </div>
+                        </div>
+                        <div id="quizRunnerCard" style="display:none;" class="quiz-runner-box"></div>
+                    </div>
+
+                    <div class="learning-tab-content" id="learningTab-materials">
+                        <div class="materials-grid" id="learningMaterialsContainer">
+                            <div class="loading-placeholder">Loading cheatsheets…</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ================= PLAYBOOKS ================= -->
+                <section class="view-panel" id="view-incident-playbooks">
+                    <div class="page-head">
+                        <div>
+                            <h1>Playbooks</h1>
+                            <p>Step-by-step procedures for containment, isolation and evidence preservation.</p>
+                        </div>
+                    </div>
+                    <div class="playbooks-container" id="playbooksContainer"></div>
+                </section>
+            </main>
+        </div>
     </div>
 
-    <!-- ================= AUTHENTICATION MODAL (LOGIN / REGISTER) ================= -->
-    <div class="auth-modal-backdrop" id="authModal" style="display:none;" onclick="handleModalBackdropClick(event)" role="dialog" aria-modal="true" aria-label="Authentication — Sign In or Create Account">
+    <!-- ================= AUTH MODAL ================= -->
+    <div class="auth-modal-backdrop" id="authModal" style="display:none;" onclick="handleModalBackdropClick(event)" role="dialog" aria-modal="true" aria-label="Sign in or create account">
         <div class="auth-modal-card" onclick="event.stopPropagation()">
-            <button class="modal-close-btn" onclick="closeAuthModal()" aria-label="Close authentication modal">✕</button>
-            
+            <button class="modal-close-btn" onclick="closeAuthModal()" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+
             <div class="auth-modal-tabs">
-                <button class="auth-tab-btn active" id="tabBtnLogin" onclick="switchAuthTab('login')">Sign In</button>
-                <button class="auth-tab-btn" id="tabBtnRegister" onclick="switchAuthTab('register')">Create Account</button>
+                <button class="auth-tab-btn active" id="tabBtnLogin" onclick="switchAuthTab('login')">Sign in</button>
+                <button class="auth-tab-btn" id="tabBtnRegister" onclick="switchAuthTab('register')">Create account</button>
             </div>
 
             <div class="auth-modal-body">
-                <!-- LOGIN FORM -->
                 <form id="loginForm" onsubmit="handleLoginSubmit(event)">
                     <div class="form-group">
-                        <label class="form-label">USERNAME OR EMAIL</label>
-                        <div class="input-with-icon">
-                            <i class="fa-solid fa-user input-fa-icon"></i>
-                            <input type="text" id="loginUsername" class="soc-input" placeholder="e.g. admin or user@company.com" required>
-                        </div>
+                        <label class="form-label" for="loginUsername">Username or email</label>
+                        <input type="text" id="loginUsername" class="soc-input" autocomplete="username" required>
                     </div>
-
-                    <div class="form-group" style="margin-top: 14px;">
-                        <label class="form-label">PASSWORD</label>
-                        <div class="input-with-icon">
-                            <i class="fa-solid fa-key input-fa-icon"></i>
-                            <input type="password" id="loginPassword" class="soc-input" placeholder="Enter password" required>
-                        </div>
+                    <div class="form-group">
+                        <label class="form-label" for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" class="soc-input" autocomplete="current-password" required>
                     </div>
-
-                    <button type="submit" class="btn-primary" style="width: 100%; margin-top: 20px; justify-content: center;" id="btnLoginSubmit">
-                        <i class="fa-solid fa-right-to-bracket"></i>
-                        <span>SIGN IN TO WORKSTATION</span>
-                    </button>
-                    <p class="auth-sub-note">Default admin: <strong>admin</strong> / <strong>Admin@123456</strong></p>
+                    <button type="submit" class="btn-primary btn-block" id="btnLoginSubmit"><span>Sign in</span></button>
                 </form>
 
-                <!-- REGISTER FORM -->
                 <form id="registerForm" style="display:none;" onsubmit="handleRegisterSubmit(event)">
                     <div class="form-group">
-                        <label class="form-label">USERNAME</label>
-                        <div class="input-with-icon">
-                            <i class="fa-solid fa-user-tag input-fa-icon"></i>
-                            <input type="text" id="regUsername" class="soc-input" placeholder="Desired username" required>
-                        </div>
+                        <label class="form-label" for="regUsername">Username</label>
+                        <input type="text" id="regUsername" class="soc-input" autocomplete="username" required>
                     </div>
-
-                    <div class="form-group" style="margin-top: 12px;">
-                        <label class="form-label">EMAIL ADDRESS</label>
-                        <div class="input-with-icon">
-                            <i class="fa-solid fa-envelope input-fa-icon"></i>
-                            <input type="email" id="regEmail" class="soc-input" placeholder="analyst@domain.com" required>
-                        </div>
+                    <div class="form-group">
+                        <label class="form-label" for="regEmail">Email</label>
+                        <input type="email" id="regEmail" class="soc-input" autocomplete="email" required>
                     </div>
-
-                    <div class="form-group" style="margin-top: 12px;">
-                        <label class="form-label">SOC ROLE</label>
+                    <div class="form-group">
+                        <label class="form-label" for="regRole">Role</label>
                         <select id="regRole" class="soc-select">
                             <option value="SecOps Analyst">SecOps Analyst</option>
                             <option value="Threat Hunter">Threat Hunter</option>
@@ -994,66 +621,54 @@
                             <option value="Security Engineer">Security Engineer</option>
                         </select>
                     </div>
-
-                    <div class="form-group" style="margin-top: 12px;">
-                        <label class="form-label">PASSWORD</label>
-                        <div class="input-with-icon">
-                            <i class="fa-solid fa-lock input-fa-icon"></i>
-                            <input type="password" id="regPassword" class="soc-input" placeholder="Minimum 6 characters" required>
-                        </div>
+                    <div class="form-group">
+                        <label class="form-label" for="regPassword">Password</label>
+                        <input type="password" id="regPassword" class="soc-input" placeholder="At least 6 characters" autocomplete="new-password" required>
                     </div>
-
-                    <button type="submit" class="btn-primary" style="width: 100%; margin-top: 20px; justify-content: center;" id="btnRegSubmit">
-                        <i class="fa-solid fa-user-plus"></i>
-                        <span>CREATE SECURE ACCOUNT</span>
-                    </button>
+                    <button type="submit" class="btn-primary btn-block" id="btnRegSubmit"><span>Create account</span></button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- ================= VIDEO MASTERCLASS MODAL ================= -->
-    <div class="media-modal-backdrop" id="videoModal" style="display:none;" onclick="handleVideoModalBackdropClick(event)" role="dialog" aria-modal="true" aria-label="Video Masterclass Player">
+    <!-- ================= VIDEO MODAL ================= -->
+    <div class="media-modal-backdrop" id="videoModal" style="display:none;" onclick="handleVideoModalBackdropClick(event)" role="dialog" aria-modal="true" aria-label="Course video">
         <div class="video-modal-card" onclick="event.stopPropagation()">
             <div class="video-modal-header">
                 <div class="video-modal-title-wrap">
-                    <span class="video-modal-badge" id="videoModalBadge">VIDEO MASTERCLASS</span>
-                    <h2 id="videoModalTitle">Loading Course...</h2>
-                    <p id="videoModalMeta">Instructor: -- • Duration: --</p>
+                    <span class="video-modal-badge" id="videoModalBadge"></span>
+                    <h2 id="videoModalTitle">Loading…</h2>
+                    <p id="videoModalMeta"></p>
                 </div>
-                <button class="modal-close-btn" onclick="closeCourseVideo()" aria-label="Close video modal">✕</button>
+                <button class="modal-close-btn" onclick="closeCourseVideo()" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            
             <div class="video-player-container">
-                <iframe id="videoModalIframe" src="" title="Video Player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                <iframe id="videoModalIframe" src="" title="Video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
             </div>
-
             <div class="video-modal-syllabus">
-                <h3><i class="fa-solid fa-list-check"></i> Course Lessons & Topic Breakdown</h3>
-                <div class="syllabus-list" id="videoModalSyllabus">
-                    <!-- Populated dynamically via JS -->
-                </div>
+                <h3>Lessons</h3>
+                <div class="syllabus-list" id="videoModalSyllabus"></div>
             </div>
         </div>
     </div>
 
-    <!-- ================= CHEATSHEET READER MODAL ================= -->
-    <div class="media-modal-backdrop" id="materialModal" style="display:none;" onclick="handleMaterialModalBackdropClick(event)" role="dialog" aria-modal="true" aria-label="Course Cheatsheet Reader">
+    <!-- ================= CHEATSHEET MODAL ================= -->
+    <div class="media-modal-backdrop" id="materialModal" style="display:none;" onclick="handleMaterialModalBackdropClick(event)" role="dialog" aria-modal="true" aria-label="Cheatsheet">
         <div class="material-modal-card" onclick="event.stopPropagation()">
             <div class="material-modal-header">
                 <div>
-                    <span class="video-modal-badge" id="materialModalType">REFERENCE CHEATSHEET</span>
-                    <h2 id="materialModalTitle">Loading Document...</h2>
-                    <p id="materialModalMeta">Format: -- • Size: --</p>
+                    <span class="video-modal-badge" id="materialModalType"></span>
+                    <h2 id="materialModalTitle">Loading…</h2>
+                    <p id="materialModalMeta"></p>
                 </div>
-                <button class="modal-close-btn" onclick="closeMaterialModal()" aria-label="Close document modal">✕</button>
+                <button class="modal-close-btn" onclick="closeMaterialModal()" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="material-modal-body">
                 <p id="materialModalDesc" class="material-desc-text"></p>
                 <div class="material-code-preview">
                     <div class="code-preview-header">
-                        <span>TACTICAL REFERENCE CONTENT</span>
-                        <button class="btn-copy-code" onclick="copyActiveMaterialContent()"><i class="fa-solid fa-copy"></i> Copy Cheatsheet</button>
+                        <span>Reference</span>
+                        <button class="btn-ghost" onclick="copyActiveMaterialContent()"><i class="fa-regular fa-copy"></i> Copy</button>
                     </div>
                     <pre><code id="materialModalContent"></code></pre>
                 </div>
@@ -1061,7 +676,6 @@
         </div>
     </div>
 
-    <!-- Notification Toast -->
     <div id="socToast" aria-live="polite" aria-atomic="true"></div>
 
     <script src="/static/js/app.js"></script>
