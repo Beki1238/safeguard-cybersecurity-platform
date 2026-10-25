@@ -1,5 +1,5 @@
 """
-SafeGuard URL & Domain Heuristic Analysis Engine
+Gasha URL & Domain Heuristic Analysis Engine
 Detects typosquatting, homoglyphs, brand spoofing, malicious TLDs, and obfuscation.
 """
 
