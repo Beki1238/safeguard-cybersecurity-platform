@@ -1,4 +1,4 @@
-SafeGuard Cybersecurity Glossary and Community Impact Plan
+Gasha Cybersecurity Glossary and Community Impact Plan
 
 1. Purpose
 
@@ -96,13 +96,13 @@ Translations should be reviewed by fluent speakers and cybersecurity practitione
 
 5.1 My role as a high-school student
 
-A student contributor can help introduce SafeGuard to other students, gather feedback, and make cybersecurity education more accessible.
+A student contributor can help introduce Gasha to other students, gather feedback, and make cybersecurity education more accessible.
 
 The goal is to become a student advocate and pilot organizer—not to claim that the school officially endorses the platform or that the platform has been independently verified.
 
 5.2 Phase One: Understand the platform
 
-Before introducing SafeGuard, I would:
+Before introducing Gasha, I would:
 
 - Learn what the existing platform actually does.
 - Test its available features and document any problems.
@@ -110,14 +110,14 @@ Before introducing SafeGuard, I would:
 - Ask the project team for permission to demonstrate the platform.
 - Prepare a short demonstration that avoids real personal data and sensitive information.
 
-5.3 Phase Two: Introduce SafeGuard to students
+5.3 Phase Two: Introduce Gasha to students
 
 I could approach a teacher, ICT instructor, cybersecurity club, or school administrator to request permission to run a short educational demonstration.
 
 A possible session could include:
 
 1. A brief introduction to cybersecurity and why it matters.
-2. A demonstration of verified SafeGuard features.
+2. A demonstration of verified Gasha features.
 3. A discussion of phishing, suspicious messages, account protection, and online privacy.
 4. A supervised activity using fictional examples.
 5. A short feedback form asking students what they learned and what could be improved.
@@ -142,7 +142,7 @@ Use anonymous feedback where possible. Participation should be voluntary, and an
 
 After the pilot:
 
-- Share findings with the SafeGuard development team.
+- Share findings with the Gasha development team.
 - Suggest improvements based on actual student feedback.
 - Document issues without publishing private information.
 - Refine the demonstration and learning materials.
@@ -155,20 +155,20 @@ Expansion should depend on evidence of value and permission from the relevant sc
 Potential indicators include:
 
 - Number of students who voluntarily participate.
-- Percentage who can explain SafeGuard's purpose afterward.
+- Percentage who can explain Gasha's purpose afterward.
 - Changes in scores on a short cybersecurity knowledge quiz.
 - Student feedback on usability and accessibility.
 - Number of actionable suggestions shared with the development team.
 
-These indicators measure learning and usability, not proof that SafeGuard prevents every cyberattack.
+These indicators measure learning and usability, not proof that Gasha prevents every cyberattack.
 
 6. Business and Sustainability Strategy
 
-6.1 The problem SafeGuard could address
+6.1 The problem Gasha could address
 
 Many people need cybersecurity guidance but may find technical tools difficult to understand.
 
-SafeGuard could create value by making relevant security information easier to interpret and by combining practical tools with accessible education.
+Gasha could create value by making relevant security information easier to interpret and by combining practical tools with accessible education.
 Its actual business opportunity depends on the features it provides, their reliability, the needs of potential customers, and alternatives already available.
 
 6.2 Potential users and customers
@@ -207,7 +207,7 @@ Potential revenue: Workshop or training fees.
 
 Model C: Institutional subscriptions
 
-If SafeGuard develops reliable, useful institutional features, schools or businesses could potentially pay for additional capabilities, administrative tools, support, or structured training.
+If Gasha develops reliable, useful institutional features, schools or businesses could potentially pay for additional capabilities, administrative tools, support, or structured training.
 
 Potential revenue: Recurring subscription fees.
 
@@ -258,7 +258,7 @@ The platform should not assume that a model suitable for Ethiopia will work unch
 6.6 Questions to validate before choosing a business model
 
 The team should investigate:
-- Which problem does SafeGuard solve better or more conveniently than alternatives?
+- Which problem does Gasha solve better or more conveniently than alternatives?
 - Who experiences that problem most often?
 - Which existing features are reliable enough to offer to users?
 - Would the intended audience use the platform repeatedly?
@@ -315,7 +315,7 @@ Participation numbers alone do not demonstrate improved security or commercial v
 
 This document presents educational information and proposed implementation and business strategies.
 
-It does not establish that SafeGuard currently implements every feature described, has secured institutional partnerships, or has a validated revenue model.
+It does not establish that Gasha currently implements every feature described, has secured institutional partnerships, or has a validated revenue model.
 
 The glossary is not a security certification, legal opinion, or guarantee of protection. Definitions and recommendations should be reviewed as technology and cybersecurity practices evolve.
 
