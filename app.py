@@ -1,5 +1,5 @@
 """
-SafeGuard — Enterprise Cybersecurity & Threat Intelligence Platform
+Gasha — Enterprise Cybersecurity & Threat Intelligence Platform
 Production WSGI & Flask Application for Local & cPanel Deployment with MySQL Storage
 """
 
@@ -23,7 +23,7 @@ _LOG_FORMAT = "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s"
 _LOG_LEVEL  = logging.DEBUG if os.environ.get('FLASK_ENV') == 'development' else logging.INFO
 
 logging.basicConfig(level=_LOG_LEVEL, format=_LOG_FORMAT)
-logger = logging.getLogger("safeguard")
+logger = logging.getLogger("gasha")
 
 # Suppress noisy third-party loggers in production
 logging.getLogger("urllib3").setLevel(logging.WARNING)
@@ -53,10 +53,10 @@ if not _secret_key:
     if _is_dev:
         import secrets as _secrets
         _secret_key = _secrets.token_hex(32)
-        print("[SafeGuard WARNING] SECRET_KEY not set. Using a temporary random key — sessions will not persist across restarts. Set SECRET_KEY in .env for development.")
+        print("[Gasha WARNING] SECRET_KEY not set. Using a temporary random key — sessions will not persist across restarts. Set SECRET_KEY in .env for development.")
     else:
         raise RuntimeError(
-            "[SafeGuard FATAL] SECRET_KEY environment variable is not set. "
+            "[Gasha FATAL] SECRET_KEY environment variable is not set. "
             "This is required in production to prevent session forgery. "
             "Set it in your .env file or environment before starting the server."
         )
@@ -273,8 +273,14 @@ def security_pre_flight():
 # ============================================================================
 @app.route('/')
 def index():
-    """Renders the primary SafeGuard Cyber Intelligence HUD."""
+    """Renders the primary Gasha Cyber Intelligence HUD."""
     return render_template('index.html')
+
+
+@app.route('/favicon.ico')
+def favicon():
+    """Serves the favicon at the root path browsers request by default."""
+    return app.send_static_file('favicon.ico')
 
 
 # ============================================================================
@@ -469,7 +475,7 @@ def health():
     """System diagnostic and telemetry health check."""
     return jsonify({
         "status": "ONLINE",
-        "service": "SafeGuard Cyber Intelligence Engine",
+        "service": "Gasha Cyber Intelligence Engine",
         "version": "2.4.0",
         "database": "MySQL / MariaDB Connected",
         "runtime": "Python/WSGI",
