@@ -1,8 +1,8 @@
-SafeGuard UI Testing Checklist
+Gasha UI Testing Checklist
 
 Purpose
 
-This checklist helps contributors manually test the SafeGuard user interface for usability, consistency, accessibility, and reliability.
+This checklist helps contributors manually test the Gasha user interface for usability, consistency, accessibility, and reliability.
 
 Important: Mark a test as passed only after performing it. Tests that have not been performed should remain unchecked.
 
@@ -83,4 +83,4 @@ When an issue is discovered, include the affected page, steps to reproduce it, e
 
 Scope
 
-This checklist is a manual testing aid, not proof that SafeGuard has passed testing. Complete the relevant checks against the running application and document any failures before reporting results.
+This checklist is a manual testing aid, not proof that Gasha has passed testing. Complete the relevant checks against the running application and document any failures before reporting results.
