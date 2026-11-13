@@ -26,3 +26,6 @@ env/
 # OS artefacts
 .DS_Store
 Thumbs.db
+
+# Raw Screen Recordings (large media)
+/*-*.mp4

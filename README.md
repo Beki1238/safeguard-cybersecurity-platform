@@ -27,7 +27,19 @@
 | **5** | **Natnael Kifle Workeneh** | `CTC-1532-26` |
 | **6** | **Fikre Hailemariam** | `CTC-1751-26` |
 
-📹 **Project Demo Video**: [Watch Demo on Google Drive](https://drive.google.com/file/d/1Ah7ZTmOpPyFluWXgHDphJGS-913Tb6dN/view?usp=sharing)
+---
+
+## 🎥 Project Demonstration & Overview Videos
+
+### 👤 Project Overview by Bereket Bahiru (`CTC-1144-26`)
+Walkthrough of the Gasha SOC Architecture, implementation details, and live platform operations presented by Bereket Bahiru:
+
+* 🎬 **Video File**: [docs/videos/bereket_bahiru_overview.mp4](file:///c:/Users/Bereket/Desktop/IMS/safeguard-cybersecurity-platform/docs/videos/bereket_bahiru_overview.mp4) (Direct link: `docs/videos/bereket_bahiru_overview.mp4`)
+
+<video src="docs/videos/bereket_bahiru_overview.mp4" controls="controls" width="100%"></video>
+
+### 🌐 Full Platform Demonstration
+* 📹 **Online Demo**: [Watch Full Demo on Google Drive](https://drive.google.com/file/d/1Ah7ZTmOpPyFluWXgHDphJGS-913Tb6dN/view?usp=sharing)
 
 ---
 
