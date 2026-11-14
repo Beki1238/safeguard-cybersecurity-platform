@@ -34,7 +34,8 @@
 ### 👤 Project Overview by Bereket Bahiru (`CTC-1144-26`)
 Walkthrough of the Gasha SOC Architecture, implementation details, and live platform operations presented by Bereket Bahiru:
 
-* 🎬 **Video File**: [docs/videos/bereket_bahiru_overview.mp4](file:///c:/Users/Bereket/Desktop/IMS/safeguard-cybersecurity-platform/docs/videos/bereket_bahiru_overview.mp4) (Direct link: `docs/videos/bereket_bahiru_overview.mp4`)
+* ☁️ **Watch on Google Drive (Streaming)**: [Google Drive Video Link](https://drive.google.com/file/d/1UpsT-ns2mctCA1abubutvrbuRLO6lWum/view?usp=drive_link)
+* 🎬 **Local Repository Video (MP4)**: [docs/videos/bereket_bahiru_overview.mp4](docs/videos/bereket_bahiru_overview.mp4)
 
 <video src="docs/videos/bereket_bahiru_overview.mp4" controls="controls" width="100%"></video>
 
