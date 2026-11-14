@@ -18,14 +18,14 @@
 
 ## 👥 Project Team Members
 
-| # | Full Name | Student ID (CTC) |
-| :-: | :--- | :--- |
-| **1** | **Bereket Bahiru Nisrane** | `CTC-1144-26` |
-| **2** | **Samuel Teshome Wakjira** | `CTC-2631-26` |
-| **3** | **Rihana Abdu** | `CTC-6285-26` |
-| **4** | **Betselot Solomon** | `CTC-2200-26` |
-| **5** | **Natnael Kifle Workeneh** | `CTC-1532-26` |
-| **6** | **Fikre Hailemariam** | `CTC-1751-26` |
+| # | Full Name | Student ID (CTC) | Overview Video |
+| :-: | :--- | :--- | :--- |
+| **1** | **Bereket Bahiru Nisrane** | `CTC-1144-26` | [Watch Video](https://drive.google.com/file/d/1UpsT-ns2mctCA1abubutvrbuRLO6lWum/view?usp=drive_link) |
+| **2** | **Samuel Teshome Wakjira** | `CTC-2631-26` | — |
+| **3** | **Rihana Abdu** | `CTC-6285-26` | — |
+| **4** | **Betselot Solomon** | `CTC-2200-26` | — |
+| **5** | **Natnael Kifle Workeneh** | `CTC-1532-26` | [Watch Video](https://drive.google.com/file/d/1HM18KobqonMuAhhy9yh6Mm5ap3Da4psr/view?usp=drive_link) |
+| **6** | **Fikre Hailemariam** | `CTC-1751-26` | — |
 
 ---
 
@@ -38,6 +38,11 @@ Walkthrough of the Gasha SOC Architecture, implementation details, and live plat
 * 🎬 **Local Repository Video (MP4)**: [docs/videos/bereket_bahiru_overview.mp4](docs/videos/bereket_bahiru_overview.mp4)
 
 <video src="docs/videos/bereket_bahiru_overview.mp4" controls="controls" width="100%"></video>
+
+### 👤 Project Overview by Natnael Kifle Workeneh (`CTC-1532-26`)
+Walkthrough and platform presentation by Natnael Kifle Workeneh:
+
+* ☁️ **Watch on Google Drive (Streaming)**: [Google Drive Video Link](https://drive.google.com/file/d/1HM18KobqonMuAhhy9yh6Mm5ap3Da4psr/view?usp=drive_link)
 
 ### 🌐 Full Platform Demonstration
 * 📹 **Online Demo**: [Watch Full Demo on Google Drive](https://drive.google.com/file/d/1Ah7ZTmOpPyFluWXgHDphJGS-913Tb6dN/view?usp=sharing)
